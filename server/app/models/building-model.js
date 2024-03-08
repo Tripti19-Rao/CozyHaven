@@ -5,17 +5,17 @@ const buildingSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'User'
         },
-    profilePic:String,//file upload using multer
+    profilePic:String,
     name:String,
     address:String,
     contact:String,
     deposit:Number,
     amenitiesPic:[{
         type: String,
-      }],               //stores more thn one file
-    rules:String,          //rich text editor
+      }],              
+    rules:String,          
     license:[{
-        type: String,   //stores more thn one file
+        type: String,   
       }],  
     geolocation:{
         lat:String,

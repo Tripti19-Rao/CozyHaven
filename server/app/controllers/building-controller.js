@@ -10,8 +10,7 @@ BuildingCltr.create = async(req,res)=>{
     return res.status(400).json({errors:errors.array()})
    }
    try{
-   //  const body = pick(req.body,['name','address','contact','deposit','rules'])
-   const {body} = req
+    const body = pick(req.body,['name','address','contact','deposit','rules','geolocation.lat','geolocation.lng'])
     const building = new Building(body)
     building.ownerId = req.user.id
     building.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;
@@ -42,7 +41,7 @@ BuildingCltr.list = async(req,res)=>{
 BuildingCltr.destroy = async(req,res)=>{
    const id = req.params.id
    try{
-      const building = await Building.findByIdAndDelete(id)
+      const building = await Building.findOneAndDelete({_id:id,ownerId:req.user.id})
       if(!building){
          return res.status(404).json({error:"Building not found"})
       }
@@ -61,7 +60,7 @@ BuildingCltr.update = async(req,res)=>{
    const id = req.params.id
    const {body} = req
    try{
-      const building = await Building.findByIdAndUpdate(id,body,{new:true})
+      const building = await Building.findOneAndUpdate(id,body,{new:true})
       res.json(building)
    }catch(err){
       console.log(err)
