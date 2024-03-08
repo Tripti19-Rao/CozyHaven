@@ -30,3 +30,4 @@ const buildingSchema = new Schema({
 const Building = model('Building', buildingSchema)
 
 module.exports = Building
+
