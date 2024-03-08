@@ -15,6 +15,8 @@ configDB()
 const UserCltr = require('./app/controllers/user-controller')
 const BuildingCltr = require('./app/controllers/building-controller')
 const reviewsCltr = require('./app/controllers/reviews-controller')
+const roomsCltr = require('./app/controllers/room-controller')
+const amenitiesCltr = require('./app/controllers/amenities-controller')
 // const RoomCltr = require('./app/controllers/room-controller')
 
 //Middlewares
@@ -27,6 +29,8 @@ const {userRegisterSchemaValidation} = require('./app/validators/user-validation
 const {userLoginSchemaValidation} = require('./app/validators/user-validation')
 const buildingSchemaValidations = require('./app/validators/building-validation')
 const getData = require('./app/middlewares/fetcher')
+const roomsValidationSchema = require('./app/validators/rooms-validation')
+const amenitiesValidationSchema = require('./app/validators/amenities-validation')
 // const roomSchemaValidation = require('./app/validators/room-validation')
 
 
@@ -49,8 +53,21 @@ app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),upload.fi
 ]),checkSchema(buildingSchemaValidations),BuildingCltr.update)
 
 
-// app.post('/api/rooms',authenticateUser,authoriseUser(['owner']),checkSchema(roomSchemaValidation),RoomCltr.create)
-// app.get('/api/rooms/:id',authenticateUser,authoriseUser(['owner']),RoomCltr.list)
+
+//rooms
+app.post('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),upload.fields([
+    {name: 'pic'}
+]),checkSchema(roomsValidationSchema),roomsCltr.create)
+app.get('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),roomsCltr.list)
+app.put('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
+    {name: 'pic'}
+]),checkSchema(roomsValidationSchema),roomsCltr.update)
+app.delete('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),roomsCltr.destroy)
+
+//amenities
+app.post('/api/amenities',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.create)
+
+
 
 
 //Reviews
