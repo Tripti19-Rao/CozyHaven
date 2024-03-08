@@ -2,6 +2,10 @@ const {Schema, model} = require('mongoose')
 const Building = require('./building-model')
 
 const roomsSchema = new Schema({
+    ownerId: {
+        type: Schema.Types.ObjectId,
+        ref: Building
+    },
     buildingId: {
         type: Schema.Types.ObjectId,
         ref: Building 
@@ -9,7 +13,9 @@ const roomsSchema = new Schema({
     roomNo: String,
     sharing: Number,
     amount: Number,
-    pic: String,
+    pic: [{
+        type: String
+    }],
     guest: [Schema.Types.ObjectId]
 },{timestamps: true})
 

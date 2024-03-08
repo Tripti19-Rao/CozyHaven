@@ -29,7 +29,7 @@ const roomsValidationSchema = {
     pic: {
         custom: {
             options: function(value,{req}){
-                if(req.file.pic) {
+                if(!req.files.pic) {
                     throw new Error('Room pic is required')
                 }
                 return true
@@ -40,8 +40,10 @@ const roomsValidationSchema = {
     guests: {
         custom: {
             options: function(value) {
-                if(!value.every(ele => /^[0-9a-fA-F]{24}$/.test(ele))) {
-                    throw new Error('Guest Id must be a valid id')
+                if(value) {
+                    if(!value.every(ele => /^[0-9a-fA-F]{24}$/.test(ele))) {
+                        throw new Error('Guest Id must be a valid id')
+                    }
                 }
                 return true
             }

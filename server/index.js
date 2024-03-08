@@ -15,6 +15,8 @@ configDB()
 //Controllers
 const UserCltr = require('./app/controllers/user-controller')
 const BuildingCltr = require('./app/controllers/building-controller')
+const roomsCltr = require('./app/controllers/room-controller')
+const amenitiesCltr = require('./app/controllers/amenities-controller')
 // const RoomCltr = require('./app/controllers/room-controller')
 
 //Middlewares
@@ -25,6 +27,8 @@ const upload = require('./app/middlewares/multer')
 const {userRegisterSchemaValidation} = require('./app/validators/user-validation')
 const {userLoginSchemaValidation} = require('./app/validators/user-validation')
 const buildingSchemaValidations = require('./app/validators/building-validation')
+const roomsValidationSchema = require('./app/validators/rooms-validation')
+const amenitiesValidationSchema = require('./app/validators/amenities-validation')
 // const roomSchemaValidation = require('./app/validators/room-validation')
 
 
@@ -42,10 +46,18 @@ app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),BuildingCltr.
 app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),BuildingCltr.destroy)
 app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),checkSchema(buildingSchemaValidations),BuildingCltr.update)
 
+//rooms
+app.post('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),upload.fields([
+    {name: 'pic'}
+]),checkSchema(roomsValidationSchema),roomsCltr.create)
+app.get('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),roomsCltr.list)
+app.put('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
+    {name: 'pic'}
+]),checkSchema(roomsValidationSchema),roomsCltr.update)
+app.delete('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),roomsCltr.destroy)
 
-// app.post('/api/rooms',RoomCltr.create)
-// app.get('/api/rooms/:id',authenticateUser,authoriseUser(['owner']),RoomCltr.list)
-
+//amenities
+app.post('/api/amenities',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.create)
 
 app.listen(port , ()=>{
     console.log("server running on port " + port)
