@@ -6,9 +6,11 @@ const app = express()
 const port  = 3055
 app.use(express.json())
 app.use(cors())
+const multer = require('multer')
 
 const configDB = require('./config/database')
 configDB()
+
 
 //Controllers
 const UserCltr = require('./app/controllers/user-controller')
@@ -30,15 +32,15 @@ const buildingSchemaValidations = require('./app/validators/building-validation'
 app.post('/api/user/register',checkSchema(userRegisterSchemaValidation),UserCltr.register)
 app.post('/api/user/login',checkSchema(userLoginSchemaValidation), UserCltr.login)
 
+//Owner 
 app.post('/api/buildings',authenticateUser,authoriseUser(['owner']),upload.fields([
     {name: 'profilePic' ,maxCount: 1},
     {name: 'amenitiesPic'},
-    {name: 'license',maxCount:3}
-    
-]),checkSchema(buildingSchemaValidations),BuildingCltr.create)
-// app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),BuildingCltr.list)
-// app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),BuildingCltr.destroy)
-// app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),checkSchema(buildingSchemaValidations),BuildingCltr.update)
+    {name: 'license'}
+]), checkSchema(buildingSchemaValidations),BuildingCltr.create)
+app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),BuildingCltr.list)
+app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),BuildingCltr.destroy)
+app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),checkSchema(buildingSchemaValidations),BuildingCltr.update)
 
 
 // app.post('/api/rooms',RoomCltr.create)
