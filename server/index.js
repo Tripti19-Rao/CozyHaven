@@ -41,8 +41,9 @@ app.post('/api/buildings',authenticateUser,authoriseUser(['owner']),upload.field
 // app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),checkSchema(buildingSchemaValidations),BuildingCltr.update)
 
 
-// app.post('/api/rooms',authenticateUser,authoriseUser(['owner']),checkSchema(roomSchemaValidation),RoomCltr.create)
+// app.post('/api/rooms',RoomCltr.create)
 // app.get('/api/rooms/:id',authenticateUser,authoriseUser(['owner']),RoomCltr.list)
+
 
 app.listen(port , ()=>{
     console.log("server running on port " + port)
