@@ -18,10 +18,10 @@ const roomsValidationSchema = {
     },
     amount: {
         notEmpty: {
-            errorMessage: 'Sharing is required'
+            errorMessage: 'Amount is required'
         },
         isNumeric: {
-            errorMessage: 'sharing must be a Number'
+            errorMessage: 'Amount must be a Number'
         },
         trim: true,
         escape: true

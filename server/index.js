@@ -19,12 +19,15 @@ const roomsCltr = require('./app/controllers/room-controller')
 const amenitiesCltr = require('./app/controllers/amenities-controller')
 const paymentsCltr = require('./app/controllers/payments-controller')
 const transactionsCltr = require('./app/controllers/transactions-controller')
+const guestsCltr = require('./app/controllers/guests-controller')
+// const RoomCltr = require('./app/controllers/room-controller')
 
 //Middlewares
 const {authenticateUser} = require('./app/middlewares/auth')
 const {authoriseUser} = require('./app/middlewares/auth')
 const upload = require('./app/middlewares/multer')
 const getData = require('./app/middlewares/fetcher')
+const {getUserName, getOwnerId} = require('./app/middlewares/fetcher')
 
 //Validations
 const {userRegisterSchemaValidation} = require('./app/validators/user-validation')
@@ -36,6 +39,13 @@ const {reviewsValidationSchema} = require('./app/validators/reviews-validation')
 const {reviewsUpdateValidationSchema} = require('./app/validators/reviews-validation')
 const paymentsValidationSchema = require('./app/validators/payments-validation')
 const transactionValdiationSchema = require('./app/validators/transactions-validation')
+//const getData = require('./app/middlewares/fetcher')
+const roomsValidationSchema = require('./app/validators/rooms-validation')
+const amenitiesValidationSchema = require('./app/validators/amenities-validation')
+const guestsValidationSchema = require('./app/validators/guests-validation')
+// const roomSchemaValidation = require('./app/validators/room-validation')
+
+
 
 app.post('/api/user/register',checkSchema(userRegisterSchemaValidation),UserCltr.register)
 app.post('/api/user/login',checkSchema(userLoginSchemaValidation), UserCltr.login)
@@ -68,8 +78,20 @@ app.delete('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']
 
 //amenities
 app.post('/api/amenities',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.create)
+app.get('/api/amenities',authenticateUser,amenitiesCltr.list)
+app.put('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.update)
+app.delete('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),amenitiesCltr.destroy)
 
 
+//Guests
+app.post('/api/:buildingid/:roomid/guests',authenticateUser,authoriseUser(['finder']),upload.fields([
+    {name: 'aadharPic'}
+]),checkSchema(guestsValidationSchema),getOwnerId,guestsCltr.create)
+app.get('/api/:buildingid/guests',authenticateUser,authoriseUser(['owner']),guestsCltr.list)
+app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
+    {name: 'aadharPic'}
+]),checkSchema(guestsValidationSchema),guestsCltr.update)
+app.delete('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
 
 
 //Reviews
@@ -90,6 +112,7 @@ app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['o
 //Transcation
 app.post('/api/transaction',checkSchema(transactionValdiationSchema),transactionsCltr.create)
 
+app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getUserName,reviewsCltr.create)
 
 
 app.listen(port , ()=>{

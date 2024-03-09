@@ -1,7 +1,8 @@
 const User = require('../models/user-model')
 const Review = require('../models/review-model')
+const Building = require('../models/building-model')
 
-const getData = async(req,res,next)=>{
+const getUserName = async (req,res,next)=>{
     const id = req.user.id
     const buildingid = req.params.buildingid
     try{
@@ -16,7 +17,7 @@ const getData = async(req,res,next)=>{
         const {body} = req
         body.name=user.username
         next()
-    }catch(err){
+    } catch(err) {
         console.log(err)
         res.status(500).json({error:'Internal server error'})
     }
@@ -24,4 +25,26 @@ const getData = async(req,res,next)=>{
 
 
 module.exports = getData
+const getOwnerId = async (req,res,next) => {
+    const buildingId = req.params.buildingid
+    try {
+        const building = await Building.findOne({_id: buildingId})
+        if(!building) {
+            return res.status(400).json({error: 'Building does not exist'})
+        }
+        const {body} = req
+        body.ownerId = building.ownerId
+        next()
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({error:'Internal server error'})
+    }
+}
+
+
+
+module.exports = {
+    getUserName,
+    getOwnerId
+}
 
