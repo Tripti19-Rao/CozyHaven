@@ -17,20 +17,23 @@ const BuildingCltr = require('./app/controllers/building-controller')
 const reviewsCltr = require('./app/controllers/reviews-controller')
 const roomsCltr = require('./app/controllers/room-controller')
 const amenitiesCltr = require('./app/controllers/amenities-controller')
+const guestsCltr = require('./app/controllers/guests-controller')
 // const RoomCltr = require('./app/controllers/room-controller')
 
 //Middlewares
 const {authenticateUser} = require('./app/middlewares/auth')
 const {authoriseUser} = require('./app/middlewares/auth')
 const upload = require('./app/middlewares/multer')
-const fetcher = require('./app/middlewares/fetcher')
+const {getUserName, getOwnerId} = require('./app/middlewares/fetcher')
+
 //Validations
 const {userRegisterSchemaValidation} = require('./app/validators/user-validation')
 const {userLoginSchemaValidation} = require('./app/validators/user-validation')
 const buildingSchemaValidations = require('./app/validators/building-validation')
-const getData = require('./app/middlewares/fetcher')
+//const getData = require('./app/middlewares/fetcher')
 const roomsValidationSchema = require('./app/validators/rooms-validation')
 const amenitiesValidationSchema = require('./app/validators/amenities-validation')
+const guestsValidationSchema = require('./app/validators/guests-validation')
 // const roomSchemaValidation = require('./app/validators/room-validation')
 
 
@@ -66,12 +69,24 @@ app.delete('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']
 
 //amenities
 app.post('/api/amenities',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.create)
+app.get('/api/amenities',authenticateUser,amenitiesCltr.list)
+app.put('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.update)
+app.delete('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),amenitiesCltr.destroy)
 
 
+//Guests
+app.post('/api/:buildingid/:roomid/guests',authenticateUser,authoriseUser(['finder']),upload.fields([
+    {name: 'aadharPic'}
+]),checkSchema(guestsValidationSchema),getOwnerId,guestsCltr.create)
+app.get('/api/:buildingid/guests',authenticateUser,authoriseUser(['owner']),guestsCltr.list)
+app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
+    {name: 'aadharPic'}
+]),checkSchema(guestsValidationSchema),guestsCltr.update)
+app.delete('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
 
 
 //Reviews
-app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getData,reviewsCltr.create)
+app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getUserName,reviewsCltr.create)
 
 
 app.listen(port , ()=>{
