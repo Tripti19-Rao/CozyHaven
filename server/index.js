@@ -10,7 +10,6 @@ app.use(cors())
 const configDB = require('./config/database')
 configDB()
 
-
 //Controllers
 const UserCltr = require('./app/controllers/user-controller')
 const BuildingCltr = require('./app/controllers/building-controller')
@@ -20,31 +19,21 @@ const amenitiesCltr = require('./app/controllers/amenities-controller')
 const paymentsCltr = require('./app/controllers/payments-controller')
 const transactionsCltr = require('./app/controllers/transactions-controller')
 const guestsCltr = require('./app/controllers/guests-controller')
-// const RoomCltr = require('./app/controllers/room-controller')
 
 //Middlewares
-const {authenticateUser} = require('./app/middlewares/auth')
-const {authoriseUser} = require('./app/middlewares/auth')
+const {authenticateUser,authoriseUser} = require('./app/middlewares/auth')
 const upload = require('./app/middlewares/multer')
-const getData = require('./app/middlewares/fetcher')
 const {getUserName, getOwnerId} = require('./app/middlewares/fetcher')
 
 //Validations
-const {userRegisterSchemaValidation} = require('./app/validators/user-validation')
-const {userLoginSchemaValidation} = require('./app/validators/user-validation')
+const {userRegisterSchemaValidation, userLoginSchemaValidation} = require('./app/validators/user-validation')
 const buildingSchemaValidations = require('./app/validators/building-validation')
 const roomsValidationSchema = require('./app/validators/rooms-validation')
+const {reviewsValidationSchema, reviewsUpdateValidationSchema} = require('./app/validators/reviews-validation')
 const amenitiesValidationSchema = require('./app/validators/amenities-validation')
-const {reviewsValidationSchema} = require('./app/validators/reviews-validation')
-const {reviewsUpdateValidationSchema} = require('./app/validators/reviews-validation')
 const paymentsValidationSchema = require('./app/validators/payments-validation')
 const transactionValdiationSchema = require('./app/validators/transactions-validation')
-//const getData = require('./app/middlewares/fetcher')
-const roomsValidationSchema = require('./app/validators/rooms-validation')
-const amenitiesValidationSchema = require('./app/validators/amenities-validation')
 const guestsValidationSchema = require('./app/validators/guests-validation')
-// const roomSchemaValidation = require('./app/validators/room-validation')
-
 
 
 app.post('/api/user/register',checkSchema(userRegisterSchemaValidation),UserCltr.register)
@@ -66,7 +55,7 @@ app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),upload.fi
 
 
 
-//rooms
+//Rooms
 app.post('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),upload.fields([
     {name: 'pic'}
 ]),checkSchema(roomsValidationSchema),roomsCltr.create)
@@ -76,7 +65,8 @@ app.put('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),u
 ]),checkSchema(roomsValidationSchema),roomsCltr.update)
 app.delete('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),roomsCltr.destroy)
 
-//amenities
+
+//Amenities
 app.post('/api/amenities',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.create)
 app.get('/api/amenities',authenticateUser,amenitiesCltr.list)
 app.put('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.update)
@@ -95,24 +85,20 @@ app.delete('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner'
 
 
 //Reviews
-app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getData,checkSchema(reviewsValidationSchema),reviewsCltr.create)
+app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getUserName,checkSchema(reviewsValidationSchema),reviewsCltr.create)
 app.get('/api/:buildingid/reviews',reviewsCltr.list)
-//put review id if more then one review is allowed
 app.put('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['finder']),checkSchema(reviewsUpdateValidationSchema),reviewsCltr.update)
 app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['finder']),reviewsCltr.destroy)
 
 
-
 //Payment
 app.post('/api/:buildingid/payment/:roomid',authenticateUser,authoriseUser(['finder']),paymentsCltr.create)
-app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),paymentsCltr.list)//anyowner if he has building id can view 
+app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),paymentsCltr.list)
 app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['owner']),paymentsCltr.listone)
 
 
 //Transcation
 app.post('/api/transaction',checkSchema(transactionValdiationSchema),transactionsCltr.create)
-
-app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getUserName,reviewsCltr.create)
 
 
 app.listen(port , ()=>{

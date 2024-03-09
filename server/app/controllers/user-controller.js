@@ -5,7 +5,6 @@ const {validationResult} = require('express-validator')
 const {pick} = require('lodash')
 const UserCltr = {}
 
-
 UserCltr.register = async(req,res)=>{
     const errors = validationResult(req)
     if(!errors.isEmpty()){

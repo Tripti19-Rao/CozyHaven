@@ -2,7 +2,6 @@ const Room = require('../models/rooms-model')
 const Building = require('../models/building-model')
 const {pick} = require('lodash')
 const {validationResult} = require('express-validator')
-
 const roomsCltr = {}
 /*ROOMS:
 _id:

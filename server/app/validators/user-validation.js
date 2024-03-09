@@ -54,7 +54,6 @@ const userRegisterSchemaValidation = {
     }
 }
 
-
 const userLoginSchemaValidation={
     email:{
         notEmpty:{
@@ -76,7 +75,6 @@ const userLoginSchemaValidation={
         trim:true,
         escape:true
     }
-
 }
 
 module.exports = {

@@ -3,7 +3,6 @@ const {pick} = require('lodash')
 const Building = require('../models/building-model')
 const BuildingCltr= {}
 
-
 BuildingCltr.create = async(req,res)=>{
    const errors = validationResult(req)
    if(!errors.isEmpty()){

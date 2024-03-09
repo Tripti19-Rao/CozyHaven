@@ -29,5 +29,4 @@ const paymentsValidationSchema = {
     },
 }
 
-
 module.exports = paymentsValidationSchema

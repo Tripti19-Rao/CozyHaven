@@ -23,8 +23,6 @@ const getUserName = async (req,res,next)=>{
     }
 }
 
-
-module.exports = getData
 const getOwnerId = async (req,res,next) => {
     const buildingId = req.params.buildingid
     try {
@@ -40,8 +38,6 @@ const getOwnerId = async (req,res,next) => {
         res.status(500).json({error:'Internal server error'})
     }
 }
-
-
 
 module.exports = {
     getUserName,

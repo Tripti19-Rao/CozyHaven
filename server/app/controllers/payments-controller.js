@@ -34,7 +34,6 @@ paymentsCltr.list = async(req,res)=>{
     }
 }
 
-
 paymentsCltr.listone = async(req,res)=>{
     try{
         const buildingid = req.params.buildingid

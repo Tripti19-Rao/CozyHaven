@@ -18,7 +18,7 @@ const transactionSchema = new Schema({
         ref:'Room'
     },
     amount:Number
-})
+},{timestamps:true})
 
 const Transaction = model('Transaction', transactionSchema)
 

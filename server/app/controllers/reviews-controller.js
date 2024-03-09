@@ -3,7 +3,6 @@ const { pick } = require('lodash')
 const Review = require('../models/review-model')
 const reviewsCltr = {}
 
-
 reviewsCltr.create = async(req,res)=>{
     const errors = validationResult(req)
     if(!errors.isEmpty()){
