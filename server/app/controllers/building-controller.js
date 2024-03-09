@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator')
-const Building = require('../models/building-model')
 const {pick} = require('lodash')
+const Building = require('../models/building-model')
 const BuildingCltr= {}
 
 
@@ -59,8 +59,11 @@ BuildingCltr.update = async(req,res)=>{
    }
    const id = req.params.id
    const {body} = req
+   body.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;
+   body.amenitiesPic = req.files['amenitiesPic'] ? req.files['amenitiesPic'].map(file => file.path) : [];
+   body.license = req.files['license'] ? req.files['license'].map(file => file.path) : [];
    try{
-      const building = await Building.findOneAndUpdate(id,body,{new:true})
+      const building = await Building.findOneAndUpdate({_id:id},body,{new:true})
       res.json(building)
    }catch(err){
       console.log(err)
