@@ -17,23 +17,25 @@ const BuildingCltr = require('./app/controllers/building-controller')
 const reviewsCltr = require('./app/controllers/reviews-controller')
 const roomsCltr = require('./app/controllers/room-controller')
 const amenitiesCltr = require('./app/controllers/amenities-controller')
-// const RoomCltr = require('./app/controllers/room-controller')
+const paymentsCltr = require('./app/controllers/payments-controller')
+const transactionsCltr = require('./app/controllers/transactions-controller')
 
 //Middlewares
 const {authenticateUser} = require('./app/middlewares/auth')
 const {authoriseUser} = require('./app/middlewares/auth')
 const upload = require('./app/middlewares/multer')
-const fetcher = require('./app/middlewares/fetcher')
+const getData = require('./app/middlewares/fetcher')
+
 //Validations
 const {userRegisterSchemaValidation} = require('./app/validators/user-validation')
 const {userLoginSchemaValidation} = require('./app/validators/user-validation')
 const buildingSchemaValidations = require('./app/validators/building-validation')
-const getData = require('./app/middlewares/fetcher')
 const roomsValidationSchema = require('./app/validators/rooms-validation')
 const amenitiesValidationSchema = require('./app/validators/amenities-validation')
-// const roomSchemaValidation = require('./app/validators/room-validation')
-
-
+const {reviewsValidationSchema} = require('./app/validators/reviews-validation')
+const {reviewsUpdateValidationSchema} = require('./app/validators/reviews-validation')
+const paymentsValidationSchema = require('./app/validators/payments-validation')
+const transactionValdiationSchema = require('./app/validators/transactions-validation')
 
 app.post('/api/user/register',checkSchema(userRegisterSchemaValidation),UserCltr.register)
 app.post('/api/user/login',checkSchema(userLoginSchemaValidation), UserCltr.login)
@@ -71,7 +73,23 @@ app.post('/api/amenities',authenticateUser,authoriseUser(['admin']),checkSchema(
 
 
 //Reviews
-app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getData,reviewsCltr.create)
+app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getData,checkSchema(reviewsValidationSchema),reviewsCltr.create)
+app.get('/api/:buildingid/reviews',reviewsCltr.list)
+//put review id if more then one review is allowed
+app.put('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['finder']),checkSchema(reviewsUpdateValidationSchema),reviewsCltr.update)
+app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['finder']),reviewsCltr.destroy)
+
+
+
+//Payment
+app.post('/api/:buildingid/payment/:roomid',authenticateUser,authoriseUser(['finder']),paymentsCltr.create)
+app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),paymentsCltr.list)//anyowner if he has building id can view 
+app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['owner']),paymentsCltr.listone)
+
+
+//Transcation
+app.post('/api/transaction',checkSchema(transactionValdiationSchema),transactionsCltr.create)
+
 
 
 app.listen(port , ()=>{
