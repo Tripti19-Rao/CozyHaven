@@ -24,7 +24,7 @@ const authoriseUser = (permittedRoles)=>{
             next()
         }
         else{
-            res.status(402).json({error:"You are not Authorised"})
+            res.status(403).json({error:"You are not Authorised"})
         }
     }
 }
