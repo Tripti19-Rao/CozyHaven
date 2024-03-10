@@ -1,16 +1,14 @@
 const {Schema, model} = require('mongoose')
-const Building = require('../models/building-model')
-const Room = require('../models/rooms-model')
 
 const guestsSchema = new Schema({
     finderId : Schema.Types.ObjectId,
     buildingId : {
         type: Schema.Types.ObjectId,
-        ref: Building
+        ref: 'Building'
     },
     roomId:  {
         type: Schema.Types.ObjectId,
-        ref: Room
+        ref: 'Room'
     },
     ownerId: {
         type: Schema.Types.ObjectId

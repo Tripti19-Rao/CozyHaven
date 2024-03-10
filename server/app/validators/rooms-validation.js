@@ -11,7 +11,7 @@ const roomsValidationSchema = {
             errorMessage: 'Sharing is required'
         },
         isNumeric: {
-            errorMessage: 'sharing must be  a Number'
+            errorMessage: 'sharing must be a Number'
         },
         trim: true,
         escape: true
@@ -30,7 +30,7 @@ const roomsValidationSchema = {
         custom: {
             options: function(value,{req}){
                 if(!req.files.pic) {
-                    throw new Error('Room pic is required')
+                    throw new Error('Room picture is required')
                 }
                 return true
             }

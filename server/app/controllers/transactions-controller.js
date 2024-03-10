@@ -1,4 +1,4 @@
-const Transaction = require('../models/transaction-model')
+const Transaction = require('../models/transactions-model')
 const {validationResult} = require('express-validator')
 const transactionsCltr = {}
 
@@ -14,7 +14,7 @@ transactionsCltr.create = async(req,res)=>{
         res.json(transaction)
     }catch(err){
         console.log(err)
-        res.status(500).json({error:'Internal server'})
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
 

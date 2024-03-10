@@ -1,14 +1,11 @@
 const amenitiesValidationSchema = {
     name: {
         notEmpty: {
-            errorMessage: 'name must not be empty'
-        }
-    },
-    // url: {
-    //     notEmpty: {
-    //         errorMessage: 'url must not be empty'
-    //     }
-    // }
+            errorMessage: 'Name is required'
+        },
+        trim:true,
+        escape:true
+    }
 }
 
 module.exports = amenitiesValidationSchema

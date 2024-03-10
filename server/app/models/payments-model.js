@@ -1,6 +1,6 @@
 const { Schema , model } = require('mongoose') 
 
-const paymentSchema = new Schema({
+const paymentsSchema = new Schema({
     userId:{
         type:Schema.Types.ObjectId,
         ref:'User'
@@ -19,6 +19,6 @@ const paymentSchema = new Schema({
     type:String,
 },{timestamps:true})
 
-const Payment = model('Payment',paymentSchema)
+const Payment = model('Payment',paymentsSchema)
 
 module.exports = Payment

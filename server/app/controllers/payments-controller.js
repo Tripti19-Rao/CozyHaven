@@ -1,4 +1,4 @@
-const Payment = require('../models/payment-model')
+const Payment = require('../models/payments-model')
 const { validationResult } = require('express-validator')
 const paymentsCltr={}
 
@@ -19,7 +19,7 @@ paymentsCltr.create = async(req,res)=>{
         res.json(payment)
     }catch(err){
         console.log(err)
-        res.status(500).json({error:'Internal server error'})
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
 
@@ -30,19 +30,22 @@ paymentsCltr.list = async(req,res)=>{
         res.json(payment)
     }catch(err){
         console.log(err)
-        res.status(500).json({error:'Internal server error'})
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
 
-paymentsCltr.listone = async(req,res)=>{
+paymentsCltr.listOne = async(req,res)=>{
     try{
         const buildingid = req.params.buildingid
         const id = req.params.paymentid
         const payment = await Payment.findOne({_id:id,buildingId:buildingid})
+        if(!payment){
+            return res.status(404).json({error:'Record Not Found'})
+        }
         res.json(payment)
     }catch(err){
         console.log(err)
-        res.status(500).json({error:'Internal server error'})
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
 

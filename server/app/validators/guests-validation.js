@@ -3,9 +3,6 @@ const guestsValidationSchema = {
         notEmpty: {
             errorMessage: 'Name is required'
         },
-        isAlpha: {
-            errorMessage: 'Name must be Alphabetic'
-        },
         trim: true,
         escape: true
     },
@@ -77,10 +74,7 @@ const guestsValidationSchema = {
     },
     qualification: {
         notEmpty: {
-            errorMessage: 'qualification is required'
-        },
-        isAlpha: {
-            errorMessage: 'qualification must be alphabetic'
+            errorMessage: 'Qualification is required'
         },
         trim: true,
         escape: true
@@ -88,9 +82,6 @@ const guestsValidationSchema = {
     guardian: {
         notEmpty: {
             errorMessage: 'Guardian is required'
-        },
-        isAlpha: {
-            errorMessage: 'Guardian must be alphabetic'
         },
         trim: true,
         escape: true

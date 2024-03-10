@@ -1,4 +1,4 @@
-const buildingSchemaValidations = {
+const buildingsValidationSchema = {
     profilePic:{
         custom:{
             options:function(value,{req}){
@@ -8,7 +8,6 @@ const buildingSchemaValidations = {
                 return true
             }
         },
-        trim:true,
         escape:true
     },
     name:{
@@ -38,7 +37,7 @@ const buildingSchemaValidations = {
                     return true
                 }
                 else{
-                    throw new Error('Deposit Amount has to be more thn 0')
+                    throw new Error('Deposit Amount has to be more than 0')
                 }
             }
         },
@@ -89,4 +88,4 @@ const buildingSchemaValidations = {
     }
 }
 
-module.exports = buildingSchemaValidations
+module.exports = buildingsValidationSchema

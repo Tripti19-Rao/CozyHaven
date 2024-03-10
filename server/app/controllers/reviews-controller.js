@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator')
 const { pick } = require('lodash')
-const Review = require('../models/review-model')
+const Review = require('../models/reviews-model')
 const reviewsCltr = {}
 
 reviewsCltr.create = async(req,res)=>{
@@ -18,7 +18,7 @@ reviewsCltr.create = async(req,res)=>{
         res.json(review)
     }catch(err){
         console.log(err)
-        res.status(500).json({error:'Internal server error'})
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
 
@@ -26,10 +26,13 @@ reviewsCltr.list = async(req,res)=>{
     try{
         const buildingid = req.params.buildingid
         const reviews = await Review.find({buildingId:buildingid})
+        if(!reviews){
+            return res.status(404).json({message: 'Record Not Found'})
+        }
         res.json(reviews)
     }catch(err){
         console.log(err)
-        res.status(500).json({error:'Internal server error'})
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
 
@@ -45,7 +48,7 @@ reviewsCltr.update = async(req,res)=>{
         res.json(review)
     }catch(err){
         console.log(err)
-        res.status(500).json({error:'Internal server error'})
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
 
@@ -58,7 +61,7 @@ reviewsCltr.destroy = async(req,res)=>{
         res.json(review)
     }catch(err){
         console.log(err)
-        res.status(500).json({error:'Internal server error'})
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
 

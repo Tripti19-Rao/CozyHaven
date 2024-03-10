@@ -10,6 +10,7 @@ amenitiesCltr.create = async (req,res) => {
     const {body} = req
     try {
         const amenity = new Amenity(body)
+        //Check if amenity already exists
         const a2 = await Amenity.findOne({name: amenity.name})
         if(a2) {
             return res.status(400).json({error: 'Amenity already exists'})
@@ -33,7 +34,7 @@ amenitiesCltr.list = async (req,res) => {
 }
 
 amenitiesCltr.update = async (req,res) => {
-    try{
+    try {
         const errors = validationResult(req)
         if(!errors.isEmpty()) {
             return res.status(400).json({errors: errors.array()})

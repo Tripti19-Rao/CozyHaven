@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose')
 
-const transactionSchema = new Schema({
+const transactionsSchema = new Schema({
     paymentid:{
         type:Schema.Types.ObjectId,
         ref:'Payment'
@@ -20,7 +20,7 @@ const transactionSchema = new Schema({
     amount:Number
 },{timestamps:true})
 
-const Transaction = model('Transaction', transactionSchema)
+const Transaction = model('Transaction', transactionsSchema)
 
 module.exports = Transaction
 

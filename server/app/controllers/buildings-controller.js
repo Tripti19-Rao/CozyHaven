@@ -1,9 +1,9 @@
 const { validationResult } = require('express-validator')
 const {pick} = require('lodash')
-const Building = require('../models/building-model')
-const BuildingCltr= {}
+const Building = require('../models/buildings-model')
+const buildingsCltr= {}
 
-BuildingCltr.create = async(req,res)=>{
+buildingsCltr.create = async(req,res)=>{
    const errors = validationResult(req)
    if(!errors.isEmpty()){
     return res.status(400).json({errors:errors.array()})
@@ -19,39 +19,39 @@ BuildingCltr.create = async(req,res)=>{
     res.status(200).json(building)
    }catch(err){
     console.log(err)
-    res.status(500).json({errors:"Internal Server Error"})
+    res.status(500).json({error:'Internal Server Error'})
    }
 }
 
-BuildingCltr.list = async(req,res)=>{
+buildingsCltr.list = async(req,res)=>{
    const id = req.user.id
    try{
       const buildings = await Building.find({ownerId:id})
-      if(buildings.length===0){
-        return res.status(200).json("You dont own any building yet")
+      if(!buildings){
+        return res.status(200).json('You dont own any building yet')
       }
       res.json(buildings)
    }catch(err){
       console.log(err)
-      res.status(500).json({error:"Internal server error"})
+      res.status(500).json({error:'Internal Server Error'})
    }   
 }
 
-BuildingCltr.destroy = async(req,res)=>{
+buildingsCltr.destroy = async(req,res)=>{
    const id = req.params.id
    try{
       const building = await Building.findOneAndDelete({_id:id,ownerId:req.user.id})
       if(!building){
-         return res.status(404).json({error:"Building not found"})
+         return res.status(404).json({error:'Building not found'})
       }
       res.json(building)
    }catch(err){
       console.log(err)
-      res.status(500).json({error:"Internal Server Error"})
+      res.status(500).json({error:'Internal Server Error'})
    }
 }
 
-BuildingCltr.update = async(req,res)=>{
+buildingsCltr.update = async(req,res)=>{
    const errors = validationResult(req)
    if(!errors.isEmpty()){
       return res.status(400).json({errors:errors.array()})
@@ -66,8 +66,8 @@ BuildingCltr.update = async(req,res)=>{
       res.json(building)
    }catch(err){
       console.log(err)
-      res.status(500).json({error:'Internal server error'})
+      res.status(500).json({error:'Internal Server Error'})
    }
 }
 
-module.exports = BuildingCltr
+module.exports = buildingsCltr

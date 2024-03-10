@@ -1,14 +1,14 @@
 const reviewsValidationSchema = {
     name:{
         notEmpty:{
-            errorMessage:'Name cannot be empty'
+            errorMessage:'Name is required'
         },
         trim:true,
         escape:true
     },
     stars:{
         notEmpty:{
-            errorMessage:'Stars cannot be empty'
+            errorMessage:'Stars is required'
         },
         isIn:{
            options:[['0.5','1','1.5','2','2.5','3','3.5','4','4.5','5']], 
@@ -19,7 +19,7 @@ const reviewsValidationSchema = {
     },
     description:{
         notEmpty:{
-            errorMessage:'Description cannot be empty'
+            errorMessage:'Description is required'
         },
         isLength:{
             options:{min:10, max:500},
@@ -33,7 +33,7 @@ const reviewsValidationSchema = {
 const reviewsUpdateValidationSchema = {
     stars:{
         notEmpty:{
-            errorMessage:'Stars cannot be empty'
+            errorMessage:'Stars is required'
         },
         isIn:{
            options:[['0.5','1','1.5','2','2.5','3','3.5','4','4.5','5']], 
@@ -44,7 +44,7 @@ const reviewsUpdateValidationSchema = {
     },
     description:{
         notEmpty:{
-            errorMessage:'Description cannot be empty'
+            errorMessage:'Description is required'
         },
         isLength:{
             options:{min:10, max:500},

@@ -1,16 +1,17 @@
-const User = require('../models/user-model')
+const User = require('../models/users-model')
 const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
 const {validationResult} = require('express-validator')
 const {pick} = require('lodash')
-const UserCltr = {}
+const usersCltr = {}
 
-UserCltr.register = async(req,res)=>{
+usersCltr.register = async(req,res)=>{
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()})
     }
     try{
+        //sanitizing input data using loadash
         const body = pick(req.body,['username','email','password','role'])
         const user = new User(body)
         const salt = await bcryptjs.genSalt()
@@ -25,7 +26,7 @@ UserCltr.register = async(req,res)=>{
 
 }
 
-UserCltr.login = async(req,res)=>{
+usersCltr.login = async(req,res)=>{
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()})
@@ -44,12 +45,12 @@ UserCltr.login = async(req,res)=>{
             id:user._id,
             role:user.role
         }
-        const token = jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn:'7d'})
+        const token = jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn:'14d'})
         res.json({'token':token})
     }catch(err){
         console.log(err)
-        res.status(500).json({errors:'Internal server error'})
+        res.status(500).json({errors:'Internal Server Error'})
     }
 }
 
-module.exports = UserCltr
+module.exports = usersCltr
