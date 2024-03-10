@@ -1,7 +1,6 @@
 const {validationResult} = require('express-validator')
 const Guest = require('../models/guests-model')
 const { pick } = require('lodash')
-
 const guestsCltr = {}
 
 guestsCltr.create = async (req,res) => {
@@ -23,11 +22,9 @@ guestsCltr.create = async (req,res) => {
         guest2.buildingId = buildingId
         guest2.roomId = roomId
         guest2.aadharPic = req.files['aadharPic'] ? req.files['aadharPic'].map(file => file.path) : []
-
         //saving guest
         await guest2.save()
         res.json(guest2)
-
     } catch(err) {
         console.log(err)
         res.status(500).json({error: 'Internal Server Error'})

@@ -1,17 +1,8 @@
 const Room = require('../models/rooms-model')
-const Building = require('../models/building-model')
 const {pick} = require('lodash')
 const {validationResult} = require('express-validator')
-
 const roomsCltr = {}
-/*ROOMS:
-_id:
-building_id:_id(building)
-roomno:
-sharing:3
-amount:
-pic:
-guests:[] */
+
 roomsCltr.create = async(req,res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()) {

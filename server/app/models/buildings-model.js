@@ -1,6 +1,6 @@
 const { Schema , model } = require('mongoose')
 
-const buildingSchema = new Schema({
+const buildingsSchema = new Schema({
     ownerId:{
         type:Schema.Types.ObjectId,
         ref:'User'
@@ -27,7 +27,7 @@ const buildingSchema = new Schema({
     }
 },{timestamps:true})
 
-const Building = model('Building', buildingSchema)
+const Building = model('Building', buildingsSchema)
 
 module.exports = Building
 

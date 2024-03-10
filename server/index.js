@@ -1,94 +1,155 @@
+//Dependencies
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const {checkSchema} = require('express-validator')
 const app = express()
 const port  = 3055
+
+//Aplication level Middlewares
 app.use(express.json())
 app.use(cors())
 
+//Configuring Database
 const configDB = require('./config/database')
 configDB()
 
-
 //Controllers
-const UserCltr = require('./app/controllers/user-controller')
-const BuildingCltr = require('./app/controllers/building-controller')
+const usersCltr = require('./app/controllers/users-controller')
+const buildingsCltr = require('./app/controllers/buildings-controller')
 const reviewsCltr = require('./app/controllers/reviews-controller')
-const roomsCltr = require('./app/controllers/room-controller')
+const roomsCltr = require('./app/controllers/rooms-controller')
 const amenitiesCltr = require('./app/controllers/amenities-controller')
+const paymentsCltr = require('./app/controllers/payments-controller')
+const transactionsCltr = require('./app/controllers/transactions-controller')
 const guestsCltr = require('./app/controllers/guests-controller')
-// const RoomCltr = require('./app/controllers/room-controller')
 
-//Middlewares
-const {authenticateUser} = require('./app/middlewares/auth')
-const {authoriseUser} = require('./app/middlewares/auth')
+//Route level Middlewares
+const {authenticateUser,authoriseUser} = require('./app/middlewares/auth')
 const upload = require('./app/middlewares/multer')
 const {getUserName, getOwnerId} = require('./app/middlewares/fetcher')
 
 //Validations
-const {userRegisterSchemaValidation} = require('./app/validators/user-validation')
-const {userLoginSchemaValidation} = require('./app/validators/user-validation')
-const buildingSchemaValidations = require('./app/validators/building-validation')
-//const getData = require('./app/middlewares/fetcher')
+const {userRegisterValidationSchema, userLoginValidationSchema} = require('./app/validators/users-validation')
+const buildingsValidationSchema = require('./app/validators/buildings-validation')
 const roomsValidationSchema = require('./app/validators/rooms-validation')
+const {reviewsValidationSchema, reviewsUpdateValidationSchema} = require('./app/validators/reviews-validation')
 const amenitiesValidationSchema = require('./app/validators/amenities-validation')
+const paymentsValidationSchema = require('./app/validators/payments-validation')
+const transactionsValdiationSchema = require('./app/validators/transactions-validation')
 const guestsValidationSchema = require('./app/validators/guests-validation')
-// const roomSchemaValidation = require('./app/validators/room-validation')
 
+//Routes
 
+//User Register
+app.post('/api/user/register',checkSchema(userRegisterValidationSchema),usersCltr.register)
 
-app.post('/api/user/register',checkSchema(userRegisterSchemaValidation),UserCltr.register)
-app.post('/api/user/login',checkSchema(userLoginSchemaValidation), UserCltr.login)
+//User Login
+app.post('/api/user/login',checkSchema(userLoginValidationSchema), usersCltr.login)
 
-//Owner 
+//OWNER - BUILDING 
+//Create Building
 app.post('/api/buildings',authenticateUser,authoriseUser(['owner']),upload.fields([
     {name: 'profilePic' ,maxCount: 1},
     {name: 'amenitiesPic'},
     {name: 'license'}
-]), checkSchema(buildingSchemaValidations),BuildingCltr.create)
-app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),BuildingCltr.list)
-app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),BuildingCltr.destroy)
+]), checkSchema(buildingsValidationSchema),buildingsCltr.create)
+
+//Listing Buildings
+app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),buildingsCltr.list)
+
+//Delete Building
+app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.destroy)
+
+//Update Building
 app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
     {name: 'profilePic' ,maxCount: 1},
     {name: 'amenitiesPic'},
     {name: 'license'}
-]),checkSchema(buildingSchemaValidations),BuildingCltr.update)
+]),checkSchema(buildingsValidationSchema),buildingsCltr.update)
 
 
-
-//rooms
+//ROOM
+//Create Room
 app.post('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),upload.fields([
     {name: 'pic'}
 ]),checkSchema(roomsValidationSchema),roomsCltr.create)
+
+//Listing Rooms
 app.get('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),roomsCltr.list)
+
+//Update Room
 app.put('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
     {name: 'pic'}
 ]),checkSchema(roomsValidationSchema),roomsCltr.update)
+
+//Delete Room
 app.delete('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),roomsCltr.destroy)
 
-//amenities
+
+//ADMIN - AMENITIES
+//Create Amenity
 app.post('/api/amenities',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.create)
+
+//Listing Amenities
 app.get('/api/amenities',authenticateUser,amenitiesCltr.list)
+
+//Update Amenity
 app.put('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),checkSchema(amenitiesValidationSchema),amenitiesCltr.update)
+
+//Delete Amenity
 app.delete('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),amenitiesCltr.destroy)
 
 
-//Guests
+//GUEST
+//Create Guest
 app.post('/api/:buildingid/:roomid/guests',authenticateUser,authoriseUser(['finder']),upload.fields([
     {name: 'aadharPic'}
 ]),checkSchema(guestsValidationSchema),getOwnerId,guestsCltr.create)
+
+//Listing Guests
 app.get('/api/:buildingid/guests',authenticateUser,authoriseUser(['owner']),guestsCltr.list)
+
+//Update Guest
 app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
     {name: 'aadharPic'}
 ]),checkSchema(guestsValidationSchema),guestsCltr.update)
+
+//Delete Guest
 app.delete('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
 
 
-//Reviews
-app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getUserName,reviewsCltr.create)
+//REVIEWS
+//Create Review
+app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getUserName,checkSchema(reviewsValidationSchema),reviewsCltr.create)
+
+//Listing Reviews
+app.get('/api/:buildingid/reviews',reviewsCltr.list)
+
+//Update Review
+app.put('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['finder']),checkSchema(reviewsUpdateValidationSchema),reviewsCltr.update)
+
+//Delete Review
+app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['finder']),reviewsCltr.destroy)
 
 
+//PAYMENT
+//Create Payment
+app.post('/api/:buildingid/payment/:roomid',authenticateUser,authoriseUser(['finder']),paymentsCltr.create)
+
+//Listing Payments
+app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),paymentsCltr.list)
+
+//Listing particular Payment
+app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['owner']),paymentsCltr.listOne)
+
+
+//TRANSACTION
+//Create Transaction
+app.post('/api/transaction',checkSchema(transactionsValdiationSchema),transactionsCltr.create)
+
+
+//LISTENING
 app.listen(port , ()=>{
     console.log("server running on port " + port)
 })

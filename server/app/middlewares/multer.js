@@ -12,19 +12,7 @@ const storage = multer.diskStorage({
         cb(null, fileName) 
     }
 })
-const upload = multer({storage:storage})
 
-// const createImage = (req,res,next)=>{
-//     try{
-//         upload.fields([
-//             {name: 'profilePic' ,maxCount: 1},
-//             {name: 'amenitiesPic'},
-//             {name: 'license',maxCount:3}
-//         ])
-//         next()
-//     }catch(err){
-//         res.status(500).json({errors:"Internal server"})
-//     }
-// }
+const upload = multer({storage:storage})
 
 module.exports = upload

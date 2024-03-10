@@ -1,6 +1,6 @@
-const User = require("../models/user-model")
+const User = require("../models/users-model")
 
-const userRegisterSchemaValidation = {
+const userRegisterValidationSchema = {
     username:{
         notEmpty:{
             errorMessage:'Username is required'
@@ -36,7 +36,7 @@ const userRegisterSchemaValidation = {
         },
         isIn:{
             options:[['admin','finder','owner']],
-            errorMessage:'role is required'
+            errorMessage:'Role is required'
         },
         trim:true,
         escape:true
@@ -54,8 +54,7 @@ const userRegisterSchemaValidation = {
     }
 }
 
-
-const userLoginSchemaValidation={
+const userLoginValidationSchema={
     email:{
         notEmpty:{
             errorMessage:'Email is required'
@@ -76,10 +75,9 @@ const userLoginSchemaValidation={
         trim:true,
         escape:true
     }
-
 }
 
 module.exports = {
-userRegisterSchemaValidation,
-userLoginSchemaValidation
+    userRegisterValidationSchema,
+    userLoginValidationSchema
 }
