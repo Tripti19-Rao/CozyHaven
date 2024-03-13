@@ -1,5 +1,6 @@
 const {validationResult} = require('express-validator')
 const Guest = require('../models/guests-model')
+const Room = require('../models/rooms-model')
 const { pick } = require('lodash')
 const guestsCltr = {}
 
@@ -21,9 +22,20 @@ guestsCltr.create = async (req,res) => {
         guest2.finderId = req.user.id
         guest2.buildingId = buildingId
         guest2.roomId = roomId
-        guest2.aadharPic = req.files['aadharPic'] ? req.files['aadharPic'].map(file => file.path) : []
-        //saving guest
-        await guest2.save()
+        guest2.aadharPic = req.files['aadharPic'] ? req.files['aadharPic'].map(file => file.path) : []        
+        const pushid= guest2._id
+        const room = await Room.findOne({_id:roomId,})
+        if(room.guest.length<room.sharing){
+            await Room.findOneAndUpdate(
+                { _id: roomId },
+                { $push: { guest: pushid } },
+                { new: true } 
+              );
+            await guest2.save()
+        }
+        else{
+            return res.status(400).json({error:'Room is not available'})
+        }
         res.json(guest2)
     } catch(err) {
         console.log(err)
@@ -74,6 +86,13 @@ guestsCltr.destroy = async (req,res) => {
         if(!guest) {
             return res.json({message: 'Record Not Found'})
         }
+        const roomid=guest.roomId
+        const room= await Room.findOne({_id:roomid,buildingId:buildingId})
+        const guestarray = room.guest.filter((ele)=>{
+            return ele != id
+        })
+        room.guest=guestarray
+        await Room.findOneAndUpdate({_id:roomid,buildingId:buildingId},room)
         res.json(guest)
     } catch(err) {
         console.log(err)
