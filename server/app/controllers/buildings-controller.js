@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator')
 const {pick} = require('lodash')
 const Building = require('../models/buildings-model')
 const buildingsCltr= {}
+const { ObjectId } = require('mongoose').Types;
 
 buildingsCltr.create = async(req,res)=>{
    const errors = validationResult(req)
@@ -65,6 +66,25 @@ buildingsCltr.update = async(req,res)=>{
       const building = await Building.findOneAndUpdate({_id:id},body,{new:true})
       res.json(building)
    }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
+buildingsCltr.search = async (req,res) => {
+   const {body} = req
+   const search = {}
+   if(body.address) {
+      search.address = body.address
+   }
+   if(body.amenities) {
+      search.amenities = body.amenities.map(id => new ObjectId(id)) 
+      console.log(search)
+   }
+   try{
+      const buildings = await Building.find(search)
+      res.json(buildings)
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }

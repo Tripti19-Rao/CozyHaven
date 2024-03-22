@@ -6,6 +6,17 @@ const guestsValidationSchema = {
         trim: true,
         escape: true
     },
+    gender: {
+        notEmpty:{
+            errorMessage:'Gender is required'
+        },
+        trim:true,
+        escape:true,
+        isIn : {
+            options: [['Male','Female','Co-Living']],
+            errorMessage: 'Gender should be selected from the given list'
+        }
+    },
     dob: {
         notEmpty: {
             errorMessage: 'Dob is required'

@@ -68,6 +68,9 @@ app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),upload.fi
     {name: 'license'}
 ]),checkSchema(buildingsValidationSchema),buildingsCltr.update)
 
+//Searching Buildings
+app.get('/api/buildings/search',buildingsCltr.search)
+
 
 //ROOM
 //Create Room
