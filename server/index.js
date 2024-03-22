@@ -23,6 +23,7 @@ const amenitiesCltr = require('./app/controllers/amenities-controller')
 const paymentsCltr = require('./app/controllers/payments-controller')
 const InvoicesCltr = require('./app/controllers/invoices-controller')
 const guestsCltr = require('./app/controllers/guests-controller')
+const findersCltr = require('./app/controllers/finders-controller')
 
 //Route level Middlewares
 const {authenticateUser,authoriseUser} = require('./app/middlewares/auth')
@@ -85,7 +86,7 @@ app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),upload.fi
 ]),checkSchema(buildingsValidationSchema),buildingsCltr.update)
 
 //Searching Buildings
-app.get('/api/buildings/search',buildingsCltr.search)
+//app.get('/api/buildings/search',buildingsCltr.search)
 
 
 //ROOM
@@ -118,6 +119,16 @@ app.put('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),checkSche
 
 //Delete Amenity
 app.delete('/api/amenities/:id',authenticateUser,authoriseUser(['admin']),amenitiesCltr.destroy)
+
+//Finder
+//Create Finder
+app.post('/api/finders',authenticateUser,authoriseUser(['finder']),findersCltr.create)
+
+//Listing Finder
+app.get('/api/finders',authenticateUser,authoriseUser(['finder']),findersCltr.list)
+
+//Updating Finder
+app.put('/api/finders/:id',authenticateUser,authoriseUser(['finder']),findersCltr.update)
 
 
 //GUEST

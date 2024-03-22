@@ -1,6 +1,6 @@
 const {Schema, model} = require('mongoose')
 
-const finderSchema = new Schema({
+const findersSchema = new Schema({
     userId : {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -9,6 +9,6 @@ const finderSchema = new Schema({
     paymentHistory : [Schema.Types.ObjectId] //an array of invoiceId's
 },{timestamps: true})
 
-const Finder = model('Finder',finderSchema)
+const Finder = model('Finder',findersSchema)
 
 module.exports = Finder
