@@ -1,4 +1,4 @@
-const transactionsValdiationSchema = {
+const invoicesValdiationSchema = {
     amount:{
         notEmpty:{
             errorMessage:'Amount is required'
@@ -11,4 +11,4 @@ const transactionsValdiationSchema = {
     }
 }
 
-module.exports = transactionsValdiationSchema
+module.exports = invoicesValdiationSchema

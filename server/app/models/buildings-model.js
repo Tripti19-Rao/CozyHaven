@@ -24,8 +24,8 @@ const buildingsSchema = new Schema({
         lng:String
     },
     isApproved:{
-        type:Boolean,
-        default:false
+        type:String,
+        default:'Pending'
     }
 },{timestamps:true})
 

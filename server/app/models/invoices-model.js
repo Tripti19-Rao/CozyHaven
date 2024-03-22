@@ -1,11 +1,7 @@
 const { Schema, model } = require('mongoose')
 
-const transactionsSchema = new Schema({
-    paymentid:{
-        type:Schema.Types.ObjectId,
-        ref:'Payment'
-    },
-    userid:{
+const invoicesSchema = new Schema({
+    userId:{
         type:Schema.Types.ObjectId,
         ref:'User'
     },
@@ -20,9 +16,9 @@ const transactionsSchema = new Schema({
     amount:Number
 },{timestamps:true})
 
-const Transaction = model('Transaction', transactionsSchema)
+const Invoice = model('Invoice', invoicesSchema)
 
-module.exports = Transaction
+module.exports = Invoice
 
 
 

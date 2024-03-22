@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator')
 const {pick} = require('lodash')
 const Building = require('../models/buildings-model')
+const nodemailer = require('nodemailer');
 const buildingsCltr= {}
 const { ObjectId } = require('mongoose').Types;
 
@@ -71,20 +72,79 @@ buildingsCltr.update = async(req,res)=>{
    }
 }
 
-buildingsCltr.search = async (req,res) => {
-   const {body} = req
-   const search = {}
-   if(body.address) {
-      search.address = body.address
-   }
-   if(body.amenities) {
-      search.amenities = body.amenities.map(id => new ObjectId(id)) 
-      console.log(search)
-   }
+buildingsCltr.listPendingApproval = async(req,res)=>{
    try{
-      const buildings = await Building.find(search)
+      const buildings = await Building.find({isApproved:'Pending'})
       res.json(buildings)
-   } catch(err){
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }   
+}
+
+buildingsCltr.approved = async(req,res)=>{
+   try{
+      const buildings = await Building.find({isApproved:'Accepted'})
+      res.json(buildings)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }   
+}
+
+
+buildingsCltr.approve = async(req,res)=>{
+   try{
+      const id = req.params.id
+      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:'true'},{new:true})
+      res.json(building)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
+buildingsCltr.approve = async(req,res)=>{
+   try{
+      const id = req.params.id
+      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:true},{new:true})
+      if(!building){
+         res.status(400).json({message:'Record not found'})
+      }
+      const email = req.user.email
+      const transporter = nodemailer.createTransport({
+         service: 'gmail',
+         auth: {
+           user: 'truptirao00@gmail.com',
+           pass: 'yroo edlq nfdi mkuu'
+         }
+      })
+      const mailOptions = {
+            from: 'truptirao00@gmail.com',
+            to: `${email}`,
+            subject: 'Approval of you Paying Guest building',
+            text: 'Welcome to CozyHaven, You can now go ahead and manage you building'
+          }
+      transporter.sendMail(mailOptions, function(error, info){
+         if (error) {
+            console.log(error);
+         } else {
+            console.log('Email sent: ' + info.response);
+         }
+      });  
+      res.json(building)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
+buildingsCltr.disapprove = async(req,res)=>{
+   try{
+      const id = req.params.id
+      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:false},{new:true})
+      res.json(building)
+   }catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }

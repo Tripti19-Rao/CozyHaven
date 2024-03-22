@@ -3,18 +3,14 @@ const { Schema , model } = require('mongoose')
 const paymentsSchema = new Schema({
     userId:{
         type:Schema.Types.ObjectId,
-        ref:'User'
+        ref:"User"
     },
-    roomId:{
+    transactionId:String, //Session onject id
+    invoiceId:{
         type:Schema.Types.ObjectId,
-        ref:'Room'
+        ref:"Invoice"
     },
-    buildingId:{
-        type:Schema.Types.ObjectId,
-        ref:'Building'
-    },
-    transactionId:String,
-    payment:String,
+    paymentType:String,
     amount:Number,
     type:String,
 },{timestamps:true})
@@ -22,3 +18,4 @@ const paymentsSchema = new Schema({
 const Payment = model('Payment',paymentsSchema)
 
 module.exports = Payment
+

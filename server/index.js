@@ -21,7 +21,7 @@ const reviewsCltr = require('./app/controllers/reviews-controller')
 const roomsCltr = require('./app/controllers/rooms-controller')
 const amenitiesCltr = require('./app/controllers/amenities-controller')
 const paymentsCltr = require('./app/controllers/payments-controller')
-const transactionsCltr = require('./app/controllers/transactions-controller')
+const InvoicesCltr = require('./app/controllers/invoices-controller')
 const guestsCltr = require('./app/controllers/guests-controller')
 
 //Route level Middlewares
@@ -31,12 +31,12 @@ const {getUserName, getOwnerId} = require('./app/middlewares/fetcher')
 
 //Validations
 const {userRegisterValidationSchema, userLoginValidationSchema} = require('./app/validators/users-validation')
-const buildingsValidationSchema = require('./app/validators/buildings-validation')
+const {buildingsValidationSchema,buildingsAprrovalValidationSchema} = require('./app/validators/buildings-validation')
 const roomsValidationSchema = require('./app/validators/rooms-validation')
 const {reviewsValidationSchema, reviewsUpdateValidationSchema} = require('./app/validators/reviews-validation')
 const amenitiesValidationSchema = require('./app/validators/amenities-validation')
 const paymentsValidationSchema = require('./app/validators/payments-validation')
-const transactionsValdiationSchema = require('./app/validators/transactions-validation')
+const invoicesValdiationSchema = require('./app/validators/invoices-validation')
 const guestsValidationSchema = require('./app/validators/guests-validation')
 
 //Routes
@@ -46,6 +46,22 @@ app.post('/api/user/register',checkSchema(userRegisterValidationSchema),usersClt
 
 //User Login
 app.post('/api/user/login',checkSchema(userLoginValidationSchema), usersCltr.login)
+
+
+//ADMIN 
+//Approval of building
+
+//list all the building whoes approval is false
+app.get('/api/buildings/approval',authenticateUser,authoriseUser(['admin']),buildingsCltr.listPendingApproval)
+
+//list all the building whoes approval is true
+app.get('/api/buildings/approved',authenticateUser,authoriseUser(['admin']),buildingsCltr.approved)
+
+//change the aprroval status to true
+app.put('/api/building/set-approval/:id',authenticateUser,authoriseUser(['admin']),buildingsCltr.approve)
+
+//change the approval status to false
+app.put('/api/building/change-approval/:id',authenticateUser,authoriseUser(['admin']),buildingsCltr.disapprove)
 
 //OWNER - BUILDING 
 //Create Building
@@ -138,7 +154,7 @@ app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser([
 
 //PAYMENT
 //Create Payment
-app.post('/api/:buildingid/payment/:roomid',authenticateUser,authoriseUser(['finder']),paymentsCltr.create)
+app.post('/api/create-checkout-session',authenticateUser,authoriseUser(['finder']),paymentsCltr.pay)
 
 //Listing Payments
 app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),paymentsCltr.list)
@@ -147,14 +163,15 @@ app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),pa
 app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['owner']),paymentsCltr.listOne)
 
 
-//TRANSACTION
-//Create Transaction
-app.post('/api/transaction',checkSchema(transactionsValdiationSchema),transactionsCltr.create)
+//INVOICE
+//Create Invoice
+app.post('/api/building/:buildingid/room/:roomid/invoice',authenticateUser,authoriseUser(['finder']),checkSchema(invoicesValdiationSchema),InvoicesCltr.create)
 
 
 //LISTENING
 app.listen(port , ()=>{
     console.log("server running on port " + port)
 })
+
 
 
