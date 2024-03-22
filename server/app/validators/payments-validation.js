@@ -6,7 +6,7 @@ const paymentsValidationSchema = {
         trim:true,
         escape:true
     },
-    payment:{
+    paymentType:{
         notEmpty:{
             errorMessage:'Payment Transaction ID cannot be empty'
         },

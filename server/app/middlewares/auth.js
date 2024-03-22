@@ -9,7 +9,8 @@ const authenticateUser = (req, res, next) => {
         const tokenData = jwt.verify(token, process.env.JWT_SECRET)
         req.user = {
             id: tokenData.id,
-            role: tokenData.role
+            role: tokenData.role,
+            email:tokenData.email
         }
         next()
     } catch (err) {

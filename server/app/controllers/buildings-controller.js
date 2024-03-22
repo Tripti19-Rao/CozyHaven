@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator')
 const {pick} = require('lodash')
 const Building = require('../models/buildings-model')
+const nodemailer = require('nodemailer');
 const buildingsCltr= {}
 
 buildingsCltr.create = async(req,res)=>{
@@ -63,6 +64,84 @@ buildingsCltr.update = async(req,res)=>{
    body.license = req.files['license'] ? req.files['license'].map(file => file.path) : [];
    try{
       const building = await Building.findOneAndUpdate({_id:id},body,{new:true})
+      res.json(building)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
+buildingsCltr.listPendingApproval = async(req,res)=>{
+   try{
+      const buildings = await Building.find({isApproved:'Pending'})
+      res.json(buildings)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }   
+}
+
+buildingsCltr.approved = async(req,res)=>{
+   try{
+      const buildings = await Building.find({isApproved:'Accepted'})
+      res.json(buildings)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }   
+}
+
+
+buildingsCltr.approve = async(req,res)=>{
+   try{
+      const id = req.params.id
+      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:'true'},{new:true})
+      res.json(building)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
+buildingsCltr.approve = async(req,res)=>{
+   try{
+      const id = req.params.id
+      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:true},{new:true})
+      if(!building){
+         res.status(400).json({message:'Record not found'})
+      }
+      const email = req.user.email
+      const transporter = nodemailer.createTransport({
+         service: 'gmail',
+         auth: {
+           user: 'truptirao00@gmail.com',
+           pass: 'yroo edlq nfdi mkuu'
+         }
+      })
+      const mailOptions = {
+            from: 'truptirao00@gmail.com',
+            to: `${email}`,
+            subject: 'Approval of you Paying Guest building',
+            text: 'Welcome to CozyHaven, You can now go ahead and manage you building'
+          }
+      transporter.sendMail(mailOptions, function(error, info){
+         if (error) {
+            console.log(error);
+         } else {
+            console.log('Email sent: ' + info.response);
+         }
+      });  
+      res.json(building)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
+buildingsCltr.disapprove = async(req,res)=>{
+   try{
+      const id = req.params.id
+      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:false},{new:true})
       res.json(building)
    }catch(err){
       console.log(err)

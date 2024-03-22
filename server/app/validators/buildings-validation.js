@@ -88,4 +88,21 @@ const buildingsValidationSchema = {
     }
 }
 
-module.exports = buildingsValidationSchema
+const buildingsAprrovalValidationSchema = {
+    isApproved:{
+        notEmpty:{
+            errorMessage:'Approval status cannot be empty'
+        },
+        isIn:{
+            options:[['Pending','Accepted','Rejected']],
+            errorMessage:'Role is required'
+        },
+        trim:true,
+        escape:true
+    }
+}
+
+module.exports = {
+    buildingsValidationSchema,
+    buildingsAprrovalValidationSchema
+} 
