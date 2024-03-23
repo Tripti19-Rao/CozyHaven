@@ -3,7 +3,10 @@ const {pick} = require('lodash')
 const Building = require('../models/buildings-model')
 const nodemailer = require('nodemailer');
 const buildingsCltr= {}
-const { ObjectId } = require('mongoose').Types;
+const ObjectId = require('mongoose').Types.ObjectId;
+const Amenity = require('../models/amenities-model')
+const Room = require('../models/rooms-model');
+const mongoose = require('mongoose');
 
 buildingsCltr.create = async(req,res)=>{
    const errors = validationResult(req)
@@ -145,6 +148,58 @@ buildingsCltr.disapprove = async(req,res)=>{
       const building = await Building.findByIdAndUpdate({_id:id},{isApproved:false},{new:true})
       res.json(building)
    }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
+buildingsCltr.search = async (req,res) => {
+   try {
+      console.log(req.query)
+      const search = req.query.address || ""
+      const gender = req.query.gender || ""
+      const sharing = req.query.sharing || ""
+      // // let amenities = req.query.amenities || "All"
+      // // let a = amenities.split(',').map(ele => new ObjectId(ele))
+      // // console.log(a)
+      // const amenitiesOption = await Amenity.find()
+      // amenities = amenities === "All" ? amenitiesOption.map(option => option._id) : amenities.split(',');
+      //console.log(amenitiesOption.map(ele =>(ele._id)).forEach(ele =>  ele))
+      //buildings based on address & gender
+      const buildings1 = await Building.find({address: { $regex: search, $options: "i" },...(gender && { gender: gender })})
+      const buildings1Id = buildings1.map(ele => ele._id)
+      //address: { $regex: search, $options: "i" },gender,
+      //amenities: { $in: a 
+      // .where("amenities")
+      // .in([...amenities])
+
+      const rooms = await Room.find({buildingId: {$in: buildings1Id},sharing})
+      const buildingIds = rooms.map(ele => ele.buildingId)
+      //buildings based on sharing
+      const buildings2 = await Building.find({_id: {$in: buildingIds}})
+
+      //combine both & remove duplicate copies of the same building
+      const combinedBuildings = buildings1.concat(buildings2)
+      const uniqueBuildingsId = []
+      const filterdBuildings = combinedBuildings.filter(ele => {
+         if(!uniqueBuildingsId.includes(ele._id.toString())) {
+            uniqueBuildingsId.push(ele._id.toString())
+            return true
+         } else {
+            return false
+         }
+      })
+      //console.log(filterdBuildings.map(ele => ele._id))
+
+      const response = {
+         error: false,
+         //amenitiess: amenitiesOption.map(ele =>new ObjectId(ele._id)),
+         buildingIds,
+         filterdBuildings
+      }
+      res.json(response)
+
+   } catch(err) {
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }

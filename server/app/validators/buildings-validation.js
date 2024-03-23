@@ -106,7 +106,7 @@ const buildingsAprrovalValidationSchema = {
         },
         isIn:{
             options:[['Pending','Accepted','Rejected']],
-            errorMessage:'Role is required'
+            errorMessage:'Approval status must be within the given list'
         },
         trim:true,
         escape:true
