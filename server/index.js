@@ -27,7 +27,7 @@ const guestsCltr = require('./app/controllers/guests-controller')
 //Route level Middlewares
 const {authenticateUser,authoriseUser} = require('./app/middlewares/auth')
 const upload = require('./app/middlewares/multer')
-const {getUserName, getOwnerId} = require('./app/middlewares/fetcher')
+const {getUserName, getOwnerId, getOwnerEmail} = require('./app/middlewares/fetcher')
 
 //Validations
 const {userRegisterValidationSchema, userLoginValidationSchema} = require('./app/validators/users-validation')
@@ -51,17 +51,17 @@ app.post('/api/user/login',checkSchema(userLoginValidationSchema), usersCltr.log
 //ADMIN 
 //Approval of building
 
-//list all the building whoes approval is false
+//list all the building whoes approval is Pending
 app.get('/api/buildings/approval',authenticateUser,authoriseUser(['admin']),buildingsCltr.listPendingApproval)
 
-//list all the building whoes approval is true
+//list all the building whoes approval is Accepted
 app.get('/api/buildings/approved',authenticateUser,authoriseUser(['admin']),buildingsCltr.approved)
 
-//change the aprroval status to true
-app.put('/api/building/set-approval/:id',authenticateUser,authoriseUser(['admin']),buildingsCltr.approve)
+//change the aprroval status to Accepted
+app.put('/api/building/set-approval/:id',authenticateUser,authoriseUser(['admin']),getOwnerEmail,buildingsCltr.approve)
 
-//change the approval status to false
-app.put('/api/building/change-approval/:id',authenticateUser,authoriseUser(['admin']),buildingsCltr.disapprove)
+//change the approval status to Rejected
+app.put('/api/building/change-approval/:id',authenticateUser,authoriseUser(['admin']),getOwnerEmail,buildingsCltr.disapprove)
 
 //OWNER - BUILDING 
 //Create Building
