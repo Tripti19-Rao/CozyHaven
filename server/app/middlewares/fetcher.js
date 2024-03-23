@@ -42,8 +42,32 @@ const getOwnerId = async (req,res,next) => {
     }
 }
 
+const getOwnerEmail = async (req,res,next)=>{
+    const buildingid = req.params.id
+    try{
+        //Check if Building exists
+        const check = await Building.findOne({_id:buildingid})
+        if(!check){
+            return res.status(400).json({message:'Record not found'})
+        }
+        //Find the email
+        const userEmail = await User.findOne({_id:check.ownerId})
+        if(!userEmail){
+            return res.status(400).json({message:'Record not found'})
+        }
+        const {body} = req
+        body.email=userEmail.email
+        next()
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({error:'Internal Server Error'})
+    }
+}
+
+
 module.exports = {
     getUserName,
-    getOwnerId
+    getOwnerId,
+    getOwnerEmail
 }
 

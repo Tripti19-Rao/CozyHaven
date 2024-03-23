@@ -95,26 +95,15 @@ buildingsCltr.approved = async(req,res)=>{
    }   
 }
 
-
 buildingsCltr.approve = async(req,res)=>{
    try{
       const id = req.params.id
-      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:'true'},{new:true})
-      res.json(building)
-   }catch(err){
-      console.log(err)
-      res.status(500).json({error:'Internal Server Error'})
-   }
-}
-
-buildingsCltr.approve = async(req,res)=>{
-   try{
-      const id = req.params.id
-      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:true},{new:true})
+      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:'Accepted'},{new:true})
       if(!building){
          res.status(400).json({message:'Record not found'})
       }
-      const email = req.user.email
+      const email = req.body.email
+      console.log(email)
       const transporter = nodemailer.createTransport({
          service: 'gmail',
          auth: {
@@ -123,11 +112,11 @@ buildingsCltr.approve = async(req,res)=>{
          }
       })
       const mailOptions = {
-            from: 'truptirao00@gmail.com',
-            to: `${email}`,
-            subject: 'Approval of you Paying Guest building',
-            text: 'Welcome to CozyHaven, You can now go ahead and manage you building'
-          }
+         from: 'truptirao00@gmail.com',
+         to: `${email}`,
+         subject: 'Approval of Your Paying Guest Building',
+         text: `Dear Owner,\n\nWe are pleased to inform you that your Paying Guest building has been approved by our admin team at CozyHaven. Congratulations!\n\nYour building is now visible and accessible for further management on our platform. You can proceed to manage your building, view details, and make any necessary updates as needed.\n\nThank you for choosing CozyHaven for your property management needs. If you have any questions or require assistance, please feel free to reach out to our support team.\n\nBest regards,\n\nCozy Haven`,
+       }
       transporter.sendMail(mailOptions, function(error, info){
          if (error) {
             console.log(error);
@@ -145,7 +134,28 @@ buildingsCltr.approve = async(req,res)=>{
 buildingsCltr.disapprove = async(req,res)=>{
    try{
       const id = req.params.id
-      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:false},{new:true})
+      const building = await Building.findByIdAndUpdate({_id:id},{isApproved:'Rejected'},{new:true})
+      const email = req.body.email
+      const transporter = nodemailer.createTransport({
+         service: 'gmail',
+         auth: {
+           user: 'truptirao00@gmail.com',
+           pass: 'yroo edlq nfdi mkuu'
+         }
+      })
+      const mailOptions = {
+         from: 'truptirao00@gmail.com',
+         to: `${email}`,
+         subject: 'Notification Regarding Your Paying Guest Building',
+         text: `Dear Owner,\n\nWe regret to inform you that your Paying Guest building submission has been rejected by our admin team at CozyHaven.\n\nUnfortunately, your building does not meet our criteria for approval at this time. If you have any questions or need further clarification, please don't hesitate to reach out to our support team.\n\nThank you for considering CozyHaven for your property management needs.\n\nBest regards,\n\nCozy Haven`,
+         }
+      transporter.sendMail(mailOptions, function(error, info){
+         if (error) {
+            console.log(error);
+         } else {
+            console.log('Email sent: ' + info.response);
+         }
+      });
       res.json(building)
    }catch(err){
       console.log(err)
@@ -153,6 +163,7 @@ buildingsCltr.disapprove = async(req,res)=>{
    }
 }
 
+<<<<<<< HEAD
 buildingsCltr.search = async (req,res) => {
    try {
       console.log(req.query)
@@ -206,3 +217,7 @@ buildingsCltr.search = async (req,res) => {
 }
 
 module.exports = buildingsCltr
+=======
+module.exports = buildingsCltr
+
+>>>>>>> c32adfb526b9f347d96fa5aaf97850759a0b9821
