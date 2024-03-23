@@ -3,6 +3,7 @@ const {pick} = require('lodash')
 const Building = require('../models/buildings-model')
 const nodemailer = require('nodemailer');
 const buildingsCltr= {}
+const { ObjectId } = require('mongoose').Types;
 
 buildingsCltr.create = async(req,res)=>{
    const errors = validationResult(req)
@@ -10,7 +11,7 @@ buildingsCltr.create = async(req,res)=>{
     return res.status(400).json({errors:errors.array()})
    }
    try{
-    const body = pick(req.body,['name','address','contact','deposit','rules','geolocation.lat','geolocation.lng'])
+    const body = pick(req.body,['name','address','contact','deposit','rules','geolocation.lat','geolocation.lng','amenities','gender'])
     const building = new Building(body)
     building.ownerId = req.user.id
     building.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;

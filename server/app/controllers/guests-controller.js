@@ -11,7 +11,7 @@ guestsCltr.create = async (req,res) => {
     }
     const buildingId = req.params.buildingid
     const roomId = req.params.roomid
-    const body = pick(req.body,['name','dob','phone','email','address','aadharNo','qualification','guardian','guardianNo','ownerId'])
+    const body = pick(req.body,['name','gender','dob','phone','email','address','aadharNo','qualification','guardian','guardianNo','ownerId'])
     try{
         //checking if the guest already exists
         const guest1 = await Guest.findOne({finderId: req.user.id,buildingId: buildingId})

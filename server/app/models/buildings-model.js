@@ -7,9 +7,11 @@ const buildingsSchema = new Schema({
         },
     profilePic:String,
     name:String,
+    gender: String,
     address:String,
     contact:String,
     deposit:Number,
+    amenities: [Schema.Types.ObjectId],
     amenitiesPic:[{
         type: String,
       }],              
