@@ -163,7 +163,6 @@ buildingsCltr.disapprove = async(req,res)=>{
    }
 }
 
-<<<<<<< HEAD
 buildingsCltr.search = async (req,res) => {
    try {
       console.log(req.query)
@@ -217,7 +216,3 @@ buildingsCltr.search = async (req,res) => {
 }
 
 module.exports = buildingsCltr
-=======
-module.exports = buildingsCltr
-
->>>>>>> c32adfb526b9f347d96fa5aaf97850759a0b9821
