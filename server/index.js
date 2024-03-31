@@ -43,10 +43,10 @@ const guestsValidationSchema = require('./app/validators/guests-validation')
 //Routes
 
 //User Register
-app.post('/api/user/register',checkSchema(userRegisterValidationSchema),usersCltr.register)
+app.post('/api/users/register',checkSchema(userRegisterValidationSchema),usersCltr.register)
 
 //User Login
-app.post('/api/user/login',checkSchema(userLoginValidationSchema), usersCltr.login)
+app.post('/api/users/login',checkSchema(userLoginValidationSchema), usersCltr.login)
 
 
 //ADMIN 
