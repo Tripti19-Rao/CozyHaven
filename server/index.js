@@ -59,10 +59,10 @@ app.get('/api/buildings/approval',authenticateUser,authoriseUser(['admin']),buil
 app.get('/api/buildings/approved',authenticateUser,authoriseUser(['admin']),buildingsCltr.approved)
 
 //change the aprroval status to Accepted
-app.put('/api/building/set-approval/:id',authenticateUser,authoriseUser(['admin']),getOwnerEmail,buildingsCltr.approve)
+app.put('/api/buildings/set-approval/:id',authenticateUser,authoriseUser(['admin']),getOwnerEmail,buildingsCltr.approve)
 
 //change the approval status to Rejected
-app.put('/api/building/change-approval/:id',authenticateUser,authoriseUser(['admin']),getOwnerEmail,buildingsCltr.disapprove)
+app.put('/api/buildings/change-approval/:id',authenticateUser,authoriseUser(['admin']),getOwnerEmail,buildingsCltr.disapprove)
 
 //OWNER - BUILDING 
 //Create Building
@@ -176,7 +176,7 @@ app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['o
 
 //INVOICE
 //Create Invoice
-app.post('/api/building/:buildingid/room/:roomid/invoice',authenticateUser,authoriseUser(['finder']),checkSchema(invoicesValdiationSchema),InvoicesCltr.create)
+app.post('/api/building/:buildingid/room/:roomid/invoices',authenticateUser,authoriseUser(['finder']),checkSchema(invoicesValdiationSchema),InvoicesCltr.create)
 
 
 //LISTENING
