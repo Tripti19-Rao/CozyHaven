@@ -176,7 +176,7 @@ buildingsCltr.search = async (req,res) => {
       // amenities = amenities === "All" ? amenitiesOption.map(option => option._id) : amenities.split(',');
       //console.log(amenitiesOption.map(ele =>(ele._id)).forEach(ele =>  ele))
       //buildings based on address & gender
-      const buildings1 = await Building.find({address: { $regex: search, $options: "i" },...(gender && { gender: gender })})
+      const buildings1 = await Building.find({address: { $regex: search, $options: "i" },...(gender && { gender:  gender})})
       const buildings1Id = buildings1.map(ele => ele._id)
       //address: { $regex: search, $options: "i" },gender,
       //amenities: { $in: a 
@@ -201,13 +201,13 @@ buildingsCltr.search = async (req,res) => {
       })
       //console.log(filterdBuildings.map(ele => ele._id))
 
-      const response = {
-         error: false,
-         //amenitiess: amenitiesOption.map(ele =>new ObjectId(ele._id)),
-         buildingIds,
-         filterdBuildings
-      }
-      res.json(response)
+      // const response = {
+      //    error: false,
+      //    //amenitiess: amenitiesOption.map(ele =>new ObjectId(ele._id)),
+      //    buildingIds,
+      //    filterdBuildings
+      // }
+      res.json(filterdBuildings)
 
    } catch(err) {
       console.log(err)

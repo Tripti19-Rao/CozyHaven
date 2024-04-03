@@ -24,7 +24,7 @@ const buildingsValidationSchema = {
         trim:true,
         escape:true,
         isIn : {
-            options: [['Male','Female','Co-Living']],
+            options: [['male','female','co-living']],
             errorMessage: 'Gender should be selected from the given list'
         }
     },
