@@ -11,7 +11,12 @@ const buildingsSchema = new Schema({
     address:String,
     contact:String,
     deposit:Number,
-    amenities: [Schema.Types.ObjectId],
+    amenities: [
+        {
+            type:Schema.Types.ObjectId,
+            ref:'Amenity'
+        }
+    ],
     amenitiesPic:[{
         type: String,
       }],              
