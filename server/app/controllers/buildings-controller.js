@@ -31,7 +31,7 @@ buildingsCltr.create = async(req,res)=>{
 buildingsCltr.list = async(req,res)=>{
    const id = req.user.id
    try{
-      const buildings = await Building.find({ownerId:id})
+      const buildings = await Building.find({ownerId:id}).populate('rooms.roomid')
       if(!buildings){
         return res.status(200).json('You dont own any building yet')
       }
@@ -40,6 +40,21 @@ buildingsCltr.list = async(req,res)=>{
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }   
+}
+
+buildingsCltr.listOne = async(req,res)=>{
+   const id = req.params.id
+   try{
+      const buildings = await Building.find({ownerId:id,isApproved:'Accepted'}).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
+      if(!buildings){
+         return res.status(200).json('You dont have any buildings to show yet')
+      }
+      res.json(buildings)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+
 }
 
 buildingsCltr.destroy = async(req,res)=>{

@@ -75,6 +75,9 @@ app.post('/api/buildings',authenticateUser,authoriseUser(['owner']),upload.field
 //Listing Buildings
 app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),buildingsCltr.list)
 
+//List a owners buildings
+app.get('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.listOne)
+
 //Delete Building
 app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.destroy)
 

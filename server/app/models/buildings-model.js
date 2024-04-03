@@ -5,6 +5,13 @@ const buildingsSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'User'
         },
+    rooms:[{
+        roomid:{
+            type:Schema.Types.ObjectId,
+            ref:'Room'
+        }
+    }],
+        
     profilePic:String,
     name:String,
     gender: String,
@@ -28,6 +35,7 @@ const buildingsSchema = new Schema({
         lat:String,
         lng:String
     },
+    rating:String,
     isApproved:{
         type:String,
         default:'Pending'
