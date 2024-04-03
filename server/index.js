@@ -89,7 +89,7 @@ app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),upload.fi
 ]),checkSchema(buildingsValidationSchema),buildingsCltr.update)
 
 //Searching Buildings
-app.get('/api/buildings/search',buildingsCltr.search)
+app.get('/api/search',buildingsCltr.search)
 
 
 //ROOM
