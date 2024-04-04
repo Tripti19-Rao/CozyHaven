@@ -191,7 +191,7 @@ buildingsCltr.search = async (req,res) => {
       // amenities = amenities === "All" ? amenitiesOption.map(option => option._id) : amenities.split(',');
       //console.log(amenitiesOption.map(ele =>(ele._id)).forEach(ele =>  ele))
       //buildings based on address & gender
-      const buildings1 = await Building.find({address: { $regex: search, $options: "i" },...(gender && { gender:  gender})})
+      const buildings1 = await Building.find({address: { $regex: search, $options: "i" },...(gender && { gender:  gender}),isApproved:'Accepted'}).populate('amenities',['_id','name','iconName'])
       const buildings1Id = buildings1.map(ele => ele._id)
       //address: { $regex: search, $options: "i" },gender,
       //amenities: { $in: a 
@@ -201,7 +201,7 @@ buildingsCltr.search = async (req,res) => {
       const rooms = await Room.find({buildingId: {$in: buildings1Id},sharing})
       const buildingIds = rooms.map(ele => ele.buildingId)
       //buildings based on sharing
-      const buildings2 = await Building.find({_id: {$in: buildingIds}})
+      const buildings2 = await Building.find({_id: {$in: buildingIds},isApproved:'Accepted'}).populate('amenities',['_id','name','iconName'])
 
       //combine both & remove duplicate copies of the same building
       const combinedBuildings = buildings1.concat(buildings2)
