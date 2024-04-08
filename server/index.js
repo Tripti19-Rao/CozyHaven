@@ -133,7 +133,10 @@ app.post('/api/finders',authenticateUser,authoriseUser(['finder']),findersCltr.c
 app.get('/api/finders',authenticateUser,authoriseUser(['finder']),findersCltr.list)
 
 //Updating Finder
-app.put('/api/finders/:id',authenticateUser,authoriseUser(['finder']),findersCltr.update)
+app.put('/api/finders',authenticateUser,authoriseUser(['finder']),findersCltr.update)
+
+//Getting One Finder
+app.get('/api/finders/findOne',authenticateUser,authoriseUser(['finder']),findersCltr.listOne)
 
 
 //GUEST
