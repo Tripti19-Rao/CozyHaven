@@ -1,8 +1,11 @@
 const User = require('../models/users-model')
+const Finder = require('../models/finder-model')
 const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
+const axios = require('axios')
 const {validationResult} = require('express-validator')
 const {pick} = require('lodash')
+const { response } = require('express')
 const usersCltr = {}
 
 usersCltr.register = async(req,res)=>{
@@ -18,6 +21,16 @@ usersCltr.register = async(req,res)=>{
         const encryptedPassword = await bcryptjs.hash(user.password,salt)
         user.password=encryptedPassword
         await user.save()
+
+        //creating finder profile
+        if(user.role === 'finder') {
+            const finder = await Finder.findOne({userId: user._id})
+            if(!finder) {
+                const f1 = {}
+                f1.userId = user._id
+                await Finder.create(f1)
+            } 
+        }
         res.status(201).json(user)
     }catch(err){
         console.log(err)
@@ -47,7 +60,23 @@ usersCltr.login = async(req,res)=>{
             email:user.email
         }
         const token = jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn:'14d'})
-        res.json({'token':token})
+
+        //finding the finders profile
+        if(user.role === 'finder') {
+            try {
+                const response = await axios.get('http://localhost:3055/api/finders/findOne',{headers: {
+                    Authorization: token
+                }})
+                res.json({'token':token,'finder_details': response.data})
+            } catch(err) {
+                console.log(err)
+            }
+        } else {
+            res.json({'token': token})
+        }
+        
+
+        
     }catch(err){
         console.log(err)
         res.status(500).json({errors:'Internal Server Error'})
