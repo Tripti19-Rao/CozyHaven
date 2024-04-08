@@ -18,19 +18,15 @@ const buildingsSchema = new Schema({
     address:String,
     contact:String,
     deposit:Number,
-    amenities: [
-        {
-            type:Schema.Types.ObjectId,
-            ref:'Amenity'
-        }
-    ],
+    amenities: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Amenity'
+      }],
     amenitiesPic:[{
         type: String,
       }],              
     rules:String,          
-    license:[{
-        type: String,   
-      }],  
+    license:String,  
     geolocation:{
         lat:String,
         lng:String

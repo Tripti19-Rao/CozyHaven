@@ -32,7 +32,7 @@ const {getUserName, getOwnerId, getOwnerEmail} = require('./app/middlewares/fetc
 
 //Validations
 const {userRegisterValidationSchema, userLoginValidationSchema} = require('./app/validators/users-validation')
-const {buildingsValidationSchema,buildingsAprrovalValidationSchema} = require('./app/validators/buildings-validation')
+const {buildingsValidationSchema,buildingsEditValidationSchema,buildingsAprrovalValidationSchema} = require('./app/validators/buildings-validation')
 const roomsValidationSchema = require('./app/validators/rooms-validation')
 const {reviewsValidationSchema, reviewsUpdateValidationSchema} = require('./app/validators/reviews-validation')
 const amenitiesValidationSchema = require('./app/validators/amenities-validation')
@@ -82,11 +82,13 @@ app.get('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildings
 app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.destroy)
 
 //Update Building
-app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
-    {name: 'profilePic' ,maxCount: 1},
-    {name: 'amenitiesPic'},
-    {name: 'license'}
-]),checkSchema(buildingsValidationSchema),buildingsCltr.update)
+app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),
+upload.fields([
+    // {name: 'profilePic' ,maxCount: 1},
+    // {name: 'amenitiesPic'},
+    // {name: 'license'}
+]),
+checkSchema(buildingsEditValidationSchema),buildingsCltr.update)
 
 //Searching Buildings
 app.get('/api/search',buildingsCltr.search)

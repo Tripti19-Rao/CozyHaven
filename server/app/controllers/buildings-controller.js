@@ -7,6 +7,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Amenity = require('../models/amenities-model')
 const Room = require('../models/rooms-model');
 const mongoose = require('mongoose');
+const cloudinary = require('../middlewares/cloudinary')
 
 buildingsCltr.create = async(req,res)=>{
    const errors = validationResult(req)
@@ -15,11 +16,43 @@ buildingsCltr.create = async(req,res)=>{
    }
    try{
     const body = pick(req.body,['name','address','contact','deposit','rules','geolocation.lat','geolocation.lng','amenities','gender'])
+
+    //images
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ message: 'No files were uploaded.' });
+  }
+
+  const singleImageUpload = async (file) => {
+      const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
+      return {
+          url: result.secure_url,
+          cloudinary_id: result.public_id
+      };
+  };
+
+  const profilePic = await singleImageUpload(req.files.profilePic[0]); // Use [0] to get the first file from the array
+  const license = await singleImageUpload(req.files.license[0]); // Use [0] to get the first file from the array
+
+  const multipleImagesUpload = async (files) => {
+      const uploadedImages = [];
+      for (const file of files) {
+          const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
+          uploadedImages.push({
+              url: result.secure_url,
+              cloudinary_id: result.public_id
+          });
+      }
+      return uploadedImages;
+  };
+
+  const amenitiesPic = await multipleImagesUpload(req.files.amenitiesPic);
+
+
     const building = new Building(body)
     building.ownerId = req.user.id
-    building.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;
-    building.amenitiesPic = req.files['amenitiesPic'] ? req.files['amenitiesPic'].map(file => file.path) : [];
-    building.license = req.files['license'] ? req.files['license'].map(file => file.path) : [];
+    building.profilePic = profilePic.url;
+    building.license = license.url;
+    building.amenitiesPic = amenitiesPic.map(pic => pic.url);
     await building.save()
     res.status(200).json(building)
    }catch(err){
@@ -31,7 +64,7 @@ buildingsCltr.create = async(req,res)=>{
 buildingsCltr.list = async(req,res)=>{
    const id = req.user.id
    try{
-      const buildings = await Building.find({ownerId:id}).populate('rooms.roomid')
+      const buildings = await Building.find({ownerId:id}).populate('rooms.roomid').populate('amenities',['name'])
       if(!buildings){
         return res.status(200).json('You dont own any building yet')
       }
@@ -45,7 +78,7 @@ buildingsCltr.list = async(req,res)=>{
 buildingsCltr.listOne = async(req,res)=>{
    const id = req.params.id
    try{
-      const buildings = await Building.find({ownerId:id,isApproved:'Accepted'}).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
+      const buildings = await Building.find({ownerId:id}).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
       if(!buildings){
          return res.status(200).json('You dont have any buildings to show yet')
       }
@@ -78,9 +111,11 @@ buildingsCltr.update = async(req,res)=>{
    }
    const id = req.params.id
    const {body} = req
-   body.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;
-   body.amenitiesPic = req.files['amenitiesPic'] ? req.files['amenitiesPic'].map(file => file.path) : [];
-   body.license = req.files['license'] ? req.files['license'].map(file => file.path) : [];
+   const name = pick(req.body,['name'])
+   console.log(name)
+   // body.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;
+   // body.amenitiesPic = req.files['amenitiesPic'] ? req.files['amenitiesPic'].map(file => file.path) : [];
+   // body.license = req.files['license'] ? req.files['license'].map(file => file.path) : [];
    try{
       const building = await Building.findOneAndUpdate({_id:id},body,{new:true})
       res.json(building)
