@@ -1,6 +1,8 @@
 const Room = require('../models/rooms-model')
-const {pick} = require('lodash')
+const Building = require('../models/buildings-model')
+const {pick, isEmpty} = require('lodash')
 const {validationResult} = require('express-validator')
+const cloudinary = require('../middlewares/cloudinary')
 const roomsCltr = {}
 
 roomsCltr.create = async(req,res) => {
@@ -8,14 +10,39 @@ roomsCltr.create = async(req,res) => {
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()})
     }
+
     const buildingId = req.params.buildingid
     const body = pick(req.body,['roomNo','sharing','amount'])
+
+    // if(isEmpty(req.files)) {
+    //     return res.status(400).json({message: 'please upload the room images'})
+    // }
+
     try{
+        const multipleImagesUpload = async (files) => {
+            const uploadedImages = []
+            for(const file of files) {
+                const result = await cloudinary.uploader.upload(file.path,{folder: 'CloudImages'})
+                uploadedImages.push(result.secure_url)
+            }
+            return uploadedImages
+        }
+
+        const roompic = await multipleImagesUpload(req.files.pic)
+
         const room = new Room(body)
         room.ownerId = req.user.id
         room.buildingId = buildingId
-        room.pic = req.files['pic'] ? req.files['pic'].map(file => file.path) : [];
+        room.pic = roompic.map(ele => ele)
         await room.save()
+
+        const building = await Building.findById({_id: room.buildingId})
+        if(building) {
+            building.rooms = [...building.rooms, {roomid: room._id}]
+            await building.save()
+            console.log(building)
+        }
+
         res.json(room)
     } catch(err) {
         console.log(err)
@@ -45,8 +72,21 @@ roomsCltr.update = async (req,res) => {
     const id = req.params.id
     const buildingId = req.params.buildingid
     const body = pick(req.body,['roomNo','sharing','amount'])
-    const {files} = req
-    body.pic = files['pic'] ? files['pic'].map(file => file.path) : [];
+
+    const multipleImagesUpload = async (files) => {
+        const uploadedImages = []
+        for(const file of files) {
+            const result = await cloudinary.uploader.upload(file.path,{folder: 'CloudImages'})
+            uploadedImages.push(result.secure_url)
+        }
+        return uploadedImages
+    }
+
+    const roompic = await multipleImagesUpload(req.files.pic)
+    body.pic = roompic.map(ele => ele)
+
+    // const {files} = req
+    // body.pic = files['pic'] ? files['pic'].map(file => file.path) : [];
     try {
         const room = await Room.findOneAndUpdate({_id: id,ownerId:req.user.id,buildingId: buildingId},body,{new:true})
         if(!room) {

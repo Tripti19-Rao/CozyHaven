@@ -69,7 +69,8 @@ usersCltr.login = async(req,res)=>{
                 }})
                 res.json({'token':token,'finder_details': response.data})
             } catch(err) {
-                console.log(err)
+                //console.log(err)
+                return res.status(404).json({errors: 'Finder profile not found, please register'})
             }
         } else {
             res.json({'token': token})

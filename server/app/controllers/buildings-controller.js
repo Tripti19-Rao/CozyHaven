@@ -3,10 +3,10 @@ const {pick} = require('lodash')
 const Building = require('../models/buildings-model')
 const nodemailer = require('nodemailer');
 const buildingsCltr= {}
-const ObjectId = require('mongoose').Types.ObjectId;
-const Amenity = require('../models/amenities-model')
+// const ObjectId = require('mongoose').Types.ObjectId;
+// const Amenity = require('../models/amenities-model')
 const Room = require('../models/rooms-model');
-const mongoose = require('mongoose');
+//const mongoose = require('mongoose');
 const cloudinary = require('../middlewares/cloudinary')
 
 buildingsCltr.create = async(req,res)=>{
