@@ -7,13 +7,13 @@ findersCltr.create = async (req,res) => {
         const userid = req.user.id //when the user Logs in finder-Profile will be created using the userId from token
         const finder1 = await Finder.findOne({userId: userid})
         if(finder1) {
-            res.json(finder1)
+           return res.json(finder1)
         } else {
             const {body} = req
             body.userId = userid
             const finder2 = new Finder(body)
             await finder2.save()
-            res.json(finder2)
+           return res.json(finder2)
         }
     } catch(err) {
         console.log(err)
@@ -37,9 +37,9 @@ findersCltr.listOne = async (req,res) => {
         const userid = req.user.id
         const finder = await Finder.findOne({userId: userid})
         if(!finder) {
-            res.status(404).json({message: 'Record Not Found'})
+            return res.status(404).json({message: 'Record Not Found'})
         }
-        res.status(201).json(finder)
+        return res.status(201).json(finder)
         //console.log(finder)
 
     } catch(err) {
