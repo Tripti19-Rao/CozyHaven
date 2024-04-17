@@ -78,6 +78,10 @@ app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),buildingsCltr
 //List a owners buildings
 app.get('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.listOne)
 
+//List One Building
+app.get('/api/buildings/one/:id',authenticateUser,authoriseUser(['finder']),buildingsCltr.listOneBuilding)
+
+
 //Delete Building
 app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.destroy)
 

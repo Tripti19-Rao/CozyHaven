@@ -40,7 +40,6 @@ roomsCltr.create = async(req,res) => {
         if(building) {
             building.rooms = [...building.rooms, {roomid: room._id}]
             await building.save()
-            console.log(building)
         }
 
         res.json(room)
@@ -55,7 +54,7 @@ roomsCltr.list = async (req,res) => {
         const buildingId = req.params.buildingid
         const rooms = await Room.find({ownerId:req.user.id,buildingId: buildingId})
         if(!rooms) {
-            return res.json({message: 'Record Not Found'})
+            return res.status(404).json({message: 'Record Not Found'})
         }
         res.json(rooms)
     } catch(err) {
@@ -90,7 +89,7 @@ roomsCltr.update = async (req,res) => {
     try {
         const room = await Room.findOneAndUpdate({_id: id,ownerId:req.user.id,buildingId: buildingId},body,{new:true})
         if(!room) {
-            return res.json({message: 'Record Not Found'})
+            return res.status(404).json({message: 'Record Not Found'})
         }
         res.json(room)
     } catch(err) {
@@ -102,12 +101,24 @@ roomsCltr.update = async (req,res) => {
 roomsCltr.destroy = async (req,res) => {
     const id = req.params.id
     const buildingId = req.params.buildingid
+    //console.log('id',id,'build',buildingId,'owner', req.user.id )
     try{
         const room = await Room.findOneAndDelete({_id: id,ownerId:req.user.id,buildingId: buildingId})
         if(!room) {
-            return res.json({message: 'Record Not Found'})
+            return res.status(404).json({message: 'Record Not Found'})
         }
-        res.json(room)
+
+        //delete from building also
+        const building = await Building.findById({_id: room.buildingId})
+        if(building) {
+        const roomObjectId =  (room._id); // Convert room._id to ObjectId
+        const filteredRooms = building.rooms.filter(ele => !(ele.roomid).equals(roomObjectId));
+            //console.log(filteredRooms);
+            building.rooms = filteredRooms
+            await building.save()
+        }
+
+        res.status(201).json(room)
     } catch(err) {
         console.log(err)
         res.status(500).json({error: 'Internal Server Error'})

@@ -90,6 +90,20 @@ buildingsCltr.listOne = async(req,res)=>{
 
 }
 
+buildingsCltr.listOneBuilding = async (req,res) => {
+   const id = req.params.id
+   try {
+      const building = await Building.findOne({_id: id}).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest']).populate('amenities',['name','iconName'])
+      if(!building) {
+         return res.status(404).json({error: 'Record Not Found'})
+      }
+      return res.status(200).json(building)
+   } catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
 buildingsCltr.destroy = async(req,res)=>{
    const id = req.params.id
    try{
