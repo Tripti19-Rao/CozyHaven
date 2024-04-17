@@ -1,3 +1,5 @@
+const { estimatedDocumentCount } = require("../models/rooms-model")
+
 const paymentsValidationSchema = {
     transactionId:{
         notEmpty:{
@@ -27,6 +29,17 @@ const paymentsValidationSchema = {
         trim:true,
         escape:true
     },
+    status:{
+        notEmpty:{
+            errorMessage:'Status is required'
+        },
+        isIn : {
+            options: [['Pending','Success','Failed']],
+            errorMessage: 'Status should be within the given list'
+        },
+        trim:true,
+        escape:true
+    }
 }
 
 module.exports = paymentsValidationSchema

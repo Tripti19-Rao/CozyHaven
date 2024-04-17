@@ -13,7 +13,8 @@ const invoicesSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'Room'
     },
-    amount:Number
+    amount:Number,
+    //invoice date:
 },{timestamps:true})
 
 const Invoice = model('Invoice', invoicesSchema)

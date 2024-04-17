@@ -40,15 +40,17 @@ paymentsCltr.pay = async(req,res)=>{
             customer : customer.id
         })
         
-        console.log(session.url)
+        // console.log(session.url)
+        // console.log(session.id)
 
         const payment = new Payment(body)
+        payment.invoiceId = body.invoiceId
         payment.transactionId = session.id
         payment.userId= req.user.id
         payment.paymentType = "card"
         payment.amount = Number(body.amount)
         await payment.save()
-        res.json({url: session.url})
+        res.json({id:session.id,url:session.url,paymentId:payment._id,invoiceId:payment.invoiceId})
     }catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})
@@ -78,6 +80,18 @@ paymentsCltr.listOne = async(req,res)=>{
     }catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})
+    }
+}
+
+paymentsCltr.update = async(req,res) =>{
+    try{
+        const stripId = req.params.stripId
+    const body = pick(req.body,['status'])
+    const payment = await Payment.findOneAndUpdate({transactionId:stripId},body,{new:true})
+    res.json(payment)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({error:'Internal Server Error'})        
     }
 }
 

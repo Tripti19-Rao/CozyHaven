@@ -175,16 +175,25 @@ app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser([
 //Create Payment
 app.post('/api/create-checkout-session',authenticateUser,authoriseUser(['finder']),paymentsCltr.pay)
 
-//Listing Payments
+//Listing Payments - for whom?
 app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),paymentsCltr.list)
 
 //Listing particular Payment
-app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['owner']),paymentsCltr.listOne)
+app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['finder']),paymentsCltr.listOne)
+
+//Updating Payment
+app.put('/api/payments/update/:stripId',authenticateUser,authoriseUser(['finder']),paymentsCltr.update)
 
 
 //INVOICE
 //Create Invoice
-app.post('/api/building/:buildingid/room/:roomid/invoices',authenticateUser,authoriseUser(['finder']),checkSchema(invoicesValdiationSchema),InvoicesCltr.create)
+app.post('/api/invoice',authenticateUser,authoriseUser(['finder']),checkSchema(invoicesValdiationSchema),InvoicesCltr.create)
+
+//Get Invoice
+app.get('/api/invoice/:id',authenticateUser,authoriseUser(['finder']),InvoicesCltr.list)
+
+//Delete Invoice
+app.delete('/api/invoice/:id',authenticateUser,authoriseUser(['finder']),InvoicesCltr.destroy)
 
 
 //LISTENING

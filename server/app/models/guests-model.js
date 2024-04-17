@@ -26,7 +26,27 @@ const guestsSchema = new Schema({
     qualification: String,
     guardian: String,
     guardianNo: Number,
-    rent: Number
+    invoiceHistroy:[{
+        type:Schema.Types.ObjectId,
+        ref:'Invoice'
+    }],
+    paymentHistroy:[{
+        type:Schema.Types.ObjectId,
+        ref:'Payment'
+    }],
+    dateOfJoin : {
+        type:Date
+    },
+    rentDate : {
+        type:Date,
+        default: function(){
+            return this.dateOfJoin
+        }
+    },
+    stay:{
+        type:Boolean,
+        default:true
+    }
 },{timestamps: true})
 
 const Guest = model('Guest',guestsSchema)
