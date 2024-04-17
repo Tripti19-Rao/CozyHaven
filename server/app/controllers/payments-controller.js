@@ -2,6 +2,9 @@ const Payment = require('../models/payments-model')
 const { validationResult } = require('express-validator')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const {pick} = require('lodash')
+const Guest = require('../models/guests-model')
+const Invoice = require('../models/invoices-model')
+const Finder = require('../models/finder-model')
 const paymentsCltr={}
 
 paymentsCltr.pay = async(req,res)=>{
@@ -50,6 +53,38 @@ paymentsCltr.pay = async(req,res)=>{
         payment.paymentType = "card"
         payment.amount = Number(body.amount)
         await payment.save()
+
+        //get the building id from invoice id
+        const invoice = await Invoice.findOne({_id: payment.invoiceId})
+        if(invoice) {
+        //creating guest with basic details
+        const guest = await Guest.findOne({finderId: payment.userId,buildingId: invoice.buildingId})
+        if(!guest) {
+            const guest = new Guest()
+            guest.finderId = payment.userId
+            guest.buildingId = invoice.buildingId
+            guest.roomId = invoice.roomId
+            guest.email = req.user.email
+            guest.invoiceHistory = [...guest.invoiceHistory, payment.invoiceId]
+            guest.paymentHistory = [...guest.paymentHistory, payment._id]
+
+            await guest.save()
+            //console.log('guest',guest)
+        } else {
+            //if the guset is already present then update the paymentHistory
+            //guest.invoiceHistory = [...guest.invoiceHistory, payment.invoiceId]
+            guest.paymentHistory = [...guest.paymentHistory, payment._id]
+        }
+        }
+
+        //push the payment to paymentHistory of finders profile
+        const finder = await Finder.findOne({userId: payment.userId})
+        if(finder) {
+            finder.paymentHistory = [...finder.paymentHistory, payment._id]
+            await finder.save()
+            //console.log('finder', finder)
+        }
+        
         res.json({id:session.id,url:session.url,paymentId:payment._id,invoiceId:payment.invoiceId})
     }catch(err){
         console.log(err)

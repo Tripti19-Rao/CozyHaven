@@ -26,11 +26,11 @@ const guestsSchema = new Schema({
     qualification: String,
     guardian: String,
     guardianNo: Number,
-    invoiceHistroy:[{
+    invoiceHistory:[{
         type:Schema.Types.ObjectId,
         ref:'Invoice'
     }],
-    paymentHistroy:[{
+    paymentHistory:[{
         type:Schema.Types.ObjectId,
         ref:'Payment'
     }],

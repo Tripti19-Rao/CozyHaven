@@ -18,10 +18,13 @@ InvoicesCltr.create = async(req,res)=>{
             return res.status(404).json({ error: 'Room not found' });
         }
         const building = await Building.findOne({_id:body.buildingId,})
+        if (!building) {
+            return res.status(404).json({ error: 'Building not found' });
+        }
         const price = room.amount + building.deposit
         const invoice1 = new Invoice(body)
         invoice1.amount = price
-        invoice1.userId = req.user._id
+        invoice1.userId = req.user._id //finders id
         await invoice1.save()
         res.json(invoice1)
         
@@ -44,7 +47,7 @@ InvoicesCltr.create = async(req,res)=>{
 InvoicesCltr.list = async(req,res)=>{
     try{
         const id = req.params.id
-    const invoice = await Invoice.findOne({_id:id})
+        const invoice = await Invoice.findOne({_id:id})
     if(!invoice){
         return res.status(404).json({ error: 'Invoice not found' });
     }
