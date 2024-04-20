@@ -62,9 +62,9 @@ guestsCltr.list = async (req,res) => {
 //list the pending guest registration of a finder
 guestsCltr.listPendingReg = async (req,res) => {
     try {
-        const finderid = req.params.id
-        console.log(finderid)
-        const guests = await Guest.find({finderId: finderid, isComplete: false}).populate('buildingId', 'name');
+        //const finderid = req.params.id
+        const userid = req.user.id
+        const guests = await Guest.find({userId: userid, isComplete: false}).populate('buildingId', 'name');
         if(!guests) {
             return res.status(404).json({message: 'Record Not Found'})
         } 

@@ -48,6 +48,9 @@ app.post('/api/users/register',checkSchema(userRegisterValidationSchema),usersCl
 //User Login
 app.post('/api/users/login',checkSchema(userLoginValidationSchema), usersCltr.login)
 
+//User Account 
+app.post('/api/users/account',authenticateUser,authoriseUser(['admin','owner','finder']),usersCltr.account)
+
 
 //ADMIN 
 //Approval of building
@@ -153,7 +156,7 @@ app.post('/api/:buildingid/:roomid/guests',authenticateUser,authoriseUser(['find
 app.get('/api/:buildingid/guests',authenticateUser,authoriseUser(['owner']),guestsCltr.list)
 
 //List Pending Guests Registeration for one finder
-app.get('/api/finderid/:id/guests',authenticateUser,authoriseUser(['finder']),guestsCltr.listPendingReg)
+app.get('/api/guests/pending-registration',authenticateUser,authoriseUser(['finder']),guestsCltr.listPendingReg)
 
 //Update Guest
 app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([

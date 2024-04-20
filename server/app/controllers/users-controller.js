@@ -5,7 +5,6 @@ const bcryptjs = require('bcryptjs')
 const axios = require('axios')
 const {validationResult} = require('express-validator')
 const {pick} = require('lodash')
-const { response } = require('express')
 const usersCltr = {}
 
 usersCltr.register = async(req,res)=>{
@@ -79,6 +78,20 @@ usersCltr.login = async(req,res)=>{
 
         
     }catch(err){
+        console.log(err)
+        res.status(500).json({errors:'Internal Server Error'})
+    }
+}
+
+usersCltr.account = async (req,res) => {
+    try {
+        const id = req.user.id
+        const user = await User.findById({_id: id})
+        if(!user) {
+            return res.status(404).json({error: 'Record Not Found'})
+        }
+        return res.status(201).json(user)
+    } catch(err){
         console.log(err)
         res.status(500).json({errors:'Internal Server Error'})
     }
