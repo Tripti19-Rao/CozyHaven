@@ -73,10 +73,10 @@ app.post('/api/buildings',authenticateUser,authoriseUser(['owner']),upload.field
 ]), checkSchema(buildingsValidationSchema),buildingsCltr.create)
 
 //Listing Buildings
-app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),buildingsCltr.list)
+// app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),buildingsCltr.list)
 
 //List a owners buildings
-app.get('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.listOne)
+app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),buildingsCltr.listOne)
 
 //List One Building
 app.get('/api/buildings/one/:id',authenticateUser,authoriseUser(['finder']),buildingsCltr.listOneBuilding)

@@ -76,7 +76,7 @@ buildingsCltr.list = async(req,res)=>{
 }
 
 buildingsCltr.listOne = async(req,res)=>{
-   const id = req.params.id
+   const id = req.user.id
    try{
       const buildings = await Building.find({ownerId:id}).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
       if(!buildings){
