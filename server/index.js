@@ -152,6 +152,9 @@ app.post('/api/:buildingid/:roomid/guests',authenticateUser,authoriseUser(['find
 //Listing Guests
 app.get('/api/:buildingid/guests',authenticateUser,authoriseUser(['owner']),guestsCltr.list)
 
+//List Pending Guests Registeration for one finder
+app.get('/api/finderid/:id/guests',authenticateUser,authoriseUser(['finder']),guestsCltr.listPendingReg)
+
 //Update Guest
 app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
     {name: 'aadharPic'}

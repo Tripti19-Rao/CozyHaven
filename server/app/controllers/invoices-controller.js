@@ -4,6 +4,7 @@ const {pick} = require('lodash')
 const Room = require('../models/rooms-model')
 const Building = require('../models/buildings-model')
 const Payment = require('../models/payments-model')
+const Guest = require('../models/guests-model')
 const InvoicesCltr = {}
 
 InvoicesCltr.create = async(req,res)=>{
@@ -24,8 +25,16 @@ InvoicesCltr.create = async(req,res)=>{
         const price = room.amount + building.deposit
         const invoice1 = new Invoice(body)
         invoice1.amount = price
-        invoice1.userId = req.user._id //finders id
+        invoice1.userId = req.user.id //finders id
         await invoice1.save()
+
+        //pushing invoice into guest
+        const guest = await Guest.findOne({finderId: invoice1.userId,buildingId: invoice1.buildingId})
+        if(guest) {
+            guest.invoiceHistory = [...guest.invoiceHistory, invoice1._id]
+            await guest.save()
+        }
+
         res.json(invoice1)
         
         // const body = pick(req.body,['amount'])
@@ -65,6 +74,16 @@ InvoicesCltr.destroy = async(req,res)=>{
     if(!invoice){
         return res.status(404).json({ error: 'Invoice not found' });
     }
+
+    //removing invoice from guest 
+    const guest = await Guest.findOne({finderId: invoice.userId,buildingId: invoice.buildingId})
+    if(guest) {
+        const filteredInvoice = guest.invoiceHistory.filter(ele => !(ele).equals(invoice._id))
+        //console.log(filteredInvoice)
+        guest.invoiceHistory = filteredInvoice
+        await guest.save()
+    }
+
     res.json(invoice)
     }catch(err){
       console.log(err)

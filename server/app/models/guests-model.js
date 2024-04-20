@@ -10,7 +10,7 @@ const guestsSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Room'
     },
-    ownerId: {
+    userId: {
         type: Schema.Types.ObjectId
     },
     name: String,
@@ -46,6 +46,10 @@ const guestsSchema = new Schema({
     stay:{
         type:Boolean,
         default:true
+    },
+    isComplete: {
+        type: Boolean,
+        default: false
     }
 },{timestamps: true})
 
