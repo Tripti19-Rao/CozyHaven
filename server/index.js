@@ -89,13 +89,43 @@ app.get('/api/buildings/one/:id',authenticateUser,authoriseUser(['finder']),buil
 app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.destroy)
 
 //Update Building
-app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),
+// app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),
+// upload.fields([
+//     {name: 'profilePic' ,maxCount: 1},
+//     {name: 'amenitiesPic'},
+//     {name: 'license'}
+// ]),
+// checkSchema(buildingsEditValidationSchema),buildingsCltr.update)
+
+
+
+//edit building without multer
+app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.update)
+
+//editing amenties images uplaod
+app.post('/api/images/amenities',authenticateUser,authoriseUser(['owner']),
 upload.fields([
-    {name: 'profilePic' ,maxCount: 1},
-    {name: 'amenitiesPic'},
+    {name: 'amenitiesPic'}
+]),buildingsCltr.updateAmenities)
+
+//editing profile image uplaod
+app.post('/api/images/profile',authenticateUser,authoriseUser(['owner']),
+upload.fields([
+    {name: 'profilePic', maxCount: 1}
+]),buildingsCltr.updateProfilePic)
+
+//editing license images uplaod
+app.post('/api/images/license',authenticateUser,authoriseUser(['owner']),
+upload.fields([
     {name: 'license'}
-]),
-checkSchema(buildingsEditValidationSchema),buildingsCltr.update)
+]),buildingsCltr.updateLicense)
+
+//editing image upload
+// app.put('/api/images',authenticateUser,authoriseUser(['owner']),
+// upload.fields([
+//     {name: 'amenitiesPic'},
+// ]),buildingsCltr.updateimages)
+
 
 //Searching Buildings
 app.get('/api/search',buildingsCltr.search)
