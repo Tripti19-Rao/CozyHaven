@@ -2,6 +2,8 @@ const {validationResult} = require('express-validator')
 const Guest = require('../models/guests-model')
 const Room = require('../models/rooms-model')
 const { pick } = require('lodash')
+const cloudinary = require('../middlewares/cloudinary')
+
 const guestsCltr = {}
 
 guestsCltr.create = async (req,res) => {
@@ -48,9 +50,25 @@ guestsCltr.list = async (req,res) => {
         const buildingId = req.params.buildingid
         const guests = await Guest.find({ownerId: req.user.id,buildingId: buildingId})
         if(!guests) {
-            return res.json({message: 'Record Not Found'})
+            return res.status(404).json({message: 'Record Not Found'})
         }
         res.json(guests)
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+}
+
+//list the pending guest registration of a finder
+guestsCltr.listPendingReg = async (req,res) => {
+    try {
+        //const finderid = req.params.id
+        const userid = req.user.id
+        const guests = await Guest.find({userId: userid, isComplete: false}).populate('buildingId', 'name');
+        if(!guests) {
+            return res.status(404).json({message: 'Record Not Found'})
+        } 
+        return res.json(guests)
     } catch(err) {
         console.log(err)
         res.status(500).json({error: 'Internal Server Error'})
@@ -65,11 +83,18 @@ guestsCltr.update = async (req,res) => {
     const id = req.params.id
     const buildingId = req.params.buildingid
     const body = pick(req.body,['name','dob','phone','email','address','aadharNo','qualification','guardian','guardianNo','ownerId'])
-    body.aadharPic = req.files['aadharPic'] ? req.files['aadharPic'].map(file => file.path) : []
+
+    const singleImageUpload = async (file) => {
+        const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
+        return result.secure_url
+    };
+    const aadharPic = await singleImageUpload(req.files.aadharPic[0]); // Use [0] to get the first file from the array
+    body.aadharPic = aadharPic
+    //body.aadharPic = req.files['aadharPic'] ? req.files['aadharPic'].map(file => file.path) : []
     try {
-        const guest = await Guest.findOneAndUpdate({_id: id,ownerId:req.user.id,buildingId: buildingId},body,{new:true})
+        const guest = await Guest.findOneAndUpdate({userId:req.user.id,buildingId: buildingId},body,{new:true})
         if(!guest) {
-            return res.json({message: 'Record Not Found'})
+            return res.status(404).json({message: 'Record Not Found'})
         }
         res.json(guest)
     } catch(err) {
