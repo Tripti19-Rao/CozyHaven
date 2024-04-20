@@ -118,26 +118,94 @@ buildingsCltr.destroy = async(req,res)=>{
    }
 }
 
-buildingsCltr.update = async(req,res)=>{
-   const errors = validationResult(req)
-   if(!errors.isEmpty()){
-      return res.status(400).json({errors:errors.array()})
+// buildingsCltr.update = async(req,res)=>{
+//    const errors = validationResult(req)
+//    if(!errors.isEmpty()){
+//       return res.status(400).json({errors:errors.array()})
+//    }
+//    const id = req.params.id
+//    const {body} = req
+//    const name = pick(req.body,['name'])
+//    console.log(name)
+//    // body.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;
+//    // body.amenitiesPic = req.files['amenitiesPic'] ? req.files['amenitiesPic'].map(file => file.path) : [];
+//    // body.license = req.files['license'] ? req.files['license'].map(file => file.path) : [];
+//    try{
+//       const building = await Building.findOneAndUpdate({_id:id},body,{new:true})
+//       res.json(building)
+//    }catch(err){
+//       console.log(err)
+//       res.status(500).json({error:'Internal Server Error'})
+//    }
+// }
+
+
+buildingsCltr.update = async (req, res) => {
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+     return res.status(400).json({ errors: errors.array() });
    }
-   const id = req.params.id
-   const {body} = req
-   const name = pick(req.body,['name'])
-   console.log(name)
-   // body.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;
-   // body.amenitiesPic = req.files['amenitiesPic'] ? req.files['amenitiesPic'].map(file => file.path) : [];
-   // body.license = req.files['license'] ? req.files['license'].map(file => file.path) : [];
-   try{
-      const building = await Building.findOneAndUpdate({_id:id},body,{new:true})
-      res.json(building)
-   }catch(err){
-      console.log(err)
-      res.status(500).json({error:'Internal Server Error'})
+ 
+   try {
+     const body = pick(req.body, ['name', 'address', 'contact', 'deposit', 'rules', 'geolocation.lat', 'geolocation.lng', 'amenities', 'gender']);
+ 
+     // Check if any files were uploaded
+     if (!req.files || Object.keys(req.files).length === 0) {
+       // No files uploaded, proceed with updating other data
+       const building = await Building.findByIdAndUpdate(req.params.id, body, { new: true });
+       return res.status(200).json(building);
+     }
+ 
+     // Define multipleImagesUpload function
+     const multipleImagesUpload = async (files) => {
+       const uploadedImages = [];
+       for (const file of files) {
+         const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
+         uploadedImages.push({
+           url: result.secure_url,
+           cloudinary_id: result.public_id,
+         });
+       }
+       return uploadedImages;
+     };
+ 
+     // Files were uploaded, handle file uploads
+     const singleImageUpload = async (file) => {
+       const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
+       return {
+         url: result.secure_url,
+         cloudinary_id: result.public_id,
+       };
+     };
+ 
+     // Update profilePic if a new file is uploaded
+     if (req.files.profilePic) {
+       const profilePic = await singleImageUpload(req.files.profilePic[0]);
+       body.profilePic = profilePic.url;
+     }
+ 
+     // Update license if a new file is uploaded
+     if (req.files.license) {
+       const license = await singleImageUpload(req.files.license[0]);
+       body.license = license.url;
+     }
+ 
+     // Update amenitiesPic if new files are uploaded
+     if (req.files.amenitiesPic && req.files.amenitiesPic.length > 0) {
+       const amenitiesPic = await multipleImagesUpload(req.files.amenitiesPic);
+       body.amenitiesPic = amenitiesPic.map((pic) => pic.url);
+     }
+ 
+     // Update building data with new values
+     const building = await Building.findByIdAndUpdate(req.params.id, body, { new: true });
+     res.status(200).json(building);
+   } catch (err) {
+     console.log(err);
+     res.status(500).json({ error: 'Internal Server Error' });
    }
-}
+ };
+ 
+
 
 buildingsCltr.listPendingApproval = async(req,res)=>{
    try{

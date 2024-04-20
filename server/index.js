@@ -88,9 +88,9 @@ app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildi
 //Update Building
 app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),
 upload.fields([
-    // {name: 'profilePic' ,maxCount: 1},
-    // {name: 'amenitiesPic'},
-    // {name: 'license'}
+    {name: 'profilePic' ,maxCount: 1},
+    {name: 'amenitiesPic'},
+    {name: 'license'}
 ]),
 checkSchema(buildingsEditValidationSchema),buildingsCltr.update)
 
