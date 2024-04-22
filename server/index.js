@@ -49,7 +49,7 @@ app.post('/api/users/register',checkSchema(userRegisterValidationSchema),usersCl
 app.post('/api/users/login',checkSchema(userLoginValidationSchema), usersCltr.login)
 
 //User Account 
-app.post('/api/users/account',authenticateUser,authoriseUser(['admin','owner','finder']),usersCltr.account)
+app.get('/api/users/account',authenticateUser,authoriseUser(['admin','owner','finder']),usersCltr.account)
 
 
 //ADMIN 

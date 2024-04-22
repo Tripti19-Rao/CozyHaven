@@ -90,7 +90,8 @@ usersCltr.account = async (req,res) => {
         if(!user) {
             return res.status(404).json({error: 'Record Not Found'})
         }
-        return res.status(201).json(user)
+        const user1 = pick(user,['_id','username','email','role'])
+        return res.status(201).json(user1)
     } catch(err){
         console.log(err)
         res.status(500).json({errors:'Internal Server Error'})
