@@ -80,9 +80,9 @@ guestsCltr.update = async (req,res) => {
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()})
     }
-    const id = req.params.id
+    //const id = req.params.id
     const buildingId = req.params.buildingid
-    const body = pick(req.body,['name','dob','phone','email','address','aadharNo','qualification','guardian','guardianNo','ownerId'])
+    const body = pick(req.body,['name','gender','dob','phoneNo','address','aadharNo','qualification','guardian','guardianNo','isComplete'])
 
     const singleImageUpload = async (file) => {
         const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });

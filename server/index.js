@@ -120,6 +120,13 @@ upload.fields([
     {name: 'license'}
 ]),buildingsCltr.updateLicense)
 
+//editing roomspic upload
+app.post('/api/images/roompic',authenticateUser,authoriseUser(['owner']),
+upload.fields([
+    {name: 'pic'}
+]),roomsCltr.updateRoompics)
+
+
 //editing image upload
 // app.put('/api/images',authenticateUser,authoriseUser(['owner']),
 // upload.fields([
@@ -189,7 +196,7 @@ app.get('/api/:buildingid/guests',authenticateUser,authoriseUser(['owner']),gues
 app.get('/api/guests/pending-registration',authenticateUser,authoriseUser(['finder']),guestsCltr.listPendingReg)
 
 //Update Guest
-app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
+app.put('/api/buildings/:buildingid/guests',authenticateUser,authoriseUser(['finder']),upload.fields([
     {name: 'aadharPic'}
 ]),checkSchema(guestsValidationSchema),guestsCltr.update)
 

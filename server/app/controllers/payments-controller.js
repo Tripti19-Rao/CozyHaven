@@ -66,7 +66,7 @@ paymentsCltr.pay = async(req,res)=>{
         const invoice = await Invoice.findOne({_id: payment.invoiceId})
         if(invoice) {
         //creating guest with basic details
-        const guest = await Guest.findOne({finderId: payment.userId,buildingId: invoice.buildingId})
+        const guest = await Guest.findOne({userId: payment.userId,buildingId: invoice.buildingId})
         if(!guest) {
             const guest = new Guest()
             guest.finderId = finder._id
@@ -89,7 +89,7 @@ paymentsCltr.pay = async(req,res)=>{
 
         
         
-        res.json({id:session.id,url:session.url,paymentId:payment._id,invoiceId:payment.invoiceId})
+        res.json({id:session.id,url:session.url,paymentId:payment._id,invoiceId:payment.invoiceId, buildingId: invoice.buildingId})
     }catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})

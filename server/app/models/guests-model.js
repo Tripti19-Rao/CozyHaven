@@ -34,15 +34,15 @@ const guestsSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'Payment'
     }],
-    dateOfJoin : {
-        type:Date
-    },
-    rentDate : {
-        type:Date,
-        default: function(){
-            return this.dateOfJoin
-        }
-    },
+    // dateOfJoin : {
+    //     type:Date
+    // },
+    // rentDate : {
+    //     type:Date,
+    //     default: function() {
+    //         return this.dateOfJoin
+    //     }
+    // },
     stay:{
         type:Boolean,
         default:true

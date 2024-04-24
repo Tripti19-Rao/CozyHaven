@@ -26,17 +26,17 @@ const roomsValidationSchema = {
         trim: true,
         escape: true
     },
-    pic: {
-        custom: {
-            options: function(value,{req}){
-                if(!req.files.pic) {
-                    throw new Error('Room picture is required')
-                }
-                return true
-            }
-        },
-        escape: true
-    },
+    // pic: {
+    //     custom: {
+    //         options: function(value,{req}){
+    //             if(!req.body.pic.length) {
+    //                 throw new Error('Room picture is required')
+    //             }
+    //             return true
+    //         }
+    //     },
+    //     escape: true
+    // },
     guests: {
         custom: {
             options: function(value) {
