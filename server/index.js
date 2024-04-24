@@ -189,12 +189,12 @@ app.get('/api/:buildingid/guests',authenticateUser,authoriseUser(['owner']),gues
 app.get('/api/guests/pending-registration',authenticateUser,authoriseUser(['finder']),guestsCltr.listPendingReg)
 
 //Update Guest
-app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
-    {name: 'aadharPic'}
-]),checkSchema(guestsValidationSchema),guestsCltr.update)
+// app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
+//     {name: 'aadharPic'}
+// ]),checkSchema(guestsValidationSchema),guestsCltr.update)
 
 //Delete Guest
-app.delete('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
+app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
 
 
 //REVIEWS

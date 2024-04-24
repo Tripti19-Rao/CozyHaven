@@ -48,13 +48,69 @@ guestsCltr.create = async (req,res) => {
 guestsCltr.list = async (req,res) => {
     try {
         const buildingId = req.params.buildingid
-        const guests = await Guest.find({ownerId: req.user.id,buildingId: buildingId})
+        const search = req.query.search || ''
+        const sortBy = req.query.sortBy || 'roomId.amount'
+        const amtorder = req.query.amtorder ||'desc'
+        const order = req.query.order ||'desc'
+        let page = req.query.page || 1
+        let limit = req.query.limit ||10
+        const stayParam = req.query.stay || true
+        const stay = stayParam === 'false' ? false : Boolean(stayParam);
+        const searchQuery = {stay:stay}
+        //const searchQuery = {name : {$regex: search, $options: 'i'}, stay:stay}
+        const sortQuery ={}
+        sortQuery[sortBy] = order === 'asc'? 1 : -1
+        sortQuery['roomId.amount'] = order === 'asc' ? 1 : -1;
+        page = parseInt(page)
+        limit = parseInt(limit)
+
+        const guests = await Guest.find({ buildingId: buildingId }).populate('roomId').populate('invoiceHistory').populate('paymentHistory')
+        .find(searchQuery)
+        //.sort(sortQuery)
+        
+
+        // const customSort = (a, b) => {
+        //     const amountA = a.roomId ? a.roomId.amount : 0;
+        //     const amountB = b.roomId ? b.roomId.amount : 0;
+        //     return amtorder === 'asc' ? amountA - amountB : amountB - amountA;
+        // };
+
+        //guests.sort(customSort).skip((page-1)*limit).limit(limit).exec();
+
         if(!guests) {
             return res.status(404).json({message: 'Record Not Found'})
         }
-        res.json(guests)
+
+        guests.sort((a, b) => {
+            const amountA = a.roomId ? a.roomId.amount : 0;
+            const amountB = b.roomId ? b.roomId.amount : 0;
+            return amtorder === 'asc' ? amountA - amountB : amountB - amountA;
+        });
+
+        
+        const filteredGuests = guests.filter(guest =>
+            guest.name.toLowerCase().includes(search.toLowerCase())
+        );
+
+
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const paginatedGuests = filteredGuests.slice(startIndex, endIndex);
+
+        const total = guests.length;
+        
+        //const total = await Guest.countDocuments(searchQuery)
+        res.json({
+            data:paginatedGuests,
+            page,
+            total,
+            limit,
+            stay,
+            totalPages:Math.ceil(total / limit)
+        })
+        // res.json(guests)
     } catch(err) {
-        console.log(err)
+        console.log(err) 
         res.status(500).json({error: 'Internal Server Error'})
     }
 }
@@ -103,11 +159,13 @@ guestsCltr.update = async (req,res) => {
     }
 }
 
+
 guestsCltr.destroy = async (req,res) => {
     const id = req.params.id
     const buildingId = req.params.buildingid
     try{
-        const guest = await Guest.findOneAndDelete({_id: id,ownerId:req.user.id,buildingId: buildingId})
+        const body = pick(req.body,['stay'])
+        const guest = await Guest.findOneAndUpdate({_id: id,buildingId: buildingId},body,{new:true})
         if(!guest) {
             return res.json({message: 'Record Not Found'})
         }

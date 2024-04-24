@@ -14,7 +14,6 @@ const invoicesSchema = new Schema({
         ref:'Room'
     },
     amount:Number,
-    //invoice date:
 },{timestamps:true})
 
 const Invoice = model('Invoice', invoicesSchema)

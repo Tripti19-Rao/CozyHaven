@@ -5,6 +5,7 @@ const {pick} = require('lodash')
 const Guest = require('../models/guests-model')
 const Invoice = require('../models/invoices-model')
 const Finder = require('../models/finder-model')
+const Room = require('../models/rooms-model')
 const paymentsCltr={}
 
 paymentsCltr.pay = async(req,res)=>{
@@ -66,7 +67,7 @@ paymentsCltr.pay = async(req,res)=>{
         const invoice = await Invoice.findOne({_id: payment.invoiceId})
         if(invoice) {
         //creating guest with basic details
-        const guest = await Guest.findOne({finderId: payment.userId,buildingId: invoice.buildingId})
+        const guest = await Guest.findOne({userId: payment.userId,buildingId: invoice.buildingId})
         if(!guest) {
             const guest = new Guest()
             guest.finderId = finder._id
@@ -76,7 +77,10 @@ paymentsCltr.pay = async(req,res)=>{
             guest.email = req.user.email
             guest.invoiceHistory = [...guest.invoiceHistory, payment.invoiceId]
             guest.paymentHistory = [...guest.paymentHistory, payment._id]
+            //guest.dateOfJoin = invoice.createdAt
             await guest.save()
+            const room = await Room.findOneAndUpdate({_id: invoice.roomId},{$push:{ guest: guest._id}},{new:true})
+            console.log(room)
         } else {
             //if the guset is already present then update the paymentHistory
             //guest.invoiceHistory = [...guest.invoiceHistory, payment.invoiceId]
@@ -86,8 +90,6 @@ paymentsCltr.pay = async(req,res)=>{
         }
        
         }
-
-        
         
         res.json({id:session.id,url:session.url,paymentId:payment._id,invoiceId:payment.invoiceId})
     }catch(err){
