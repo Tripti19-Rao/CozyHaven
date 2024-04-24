@@ -3,6 +3,7 @@ const Building = require('../models/buildings-model')
 const {pick, isEmpty} = require('lodash')
 const {validationResult} = require('express-validator')
 const cloudinary = require('../middlewares/cloudinary')
+const { pic } = require('../validators/rooms-validation')
 const roomsCltr = {}
 
 roomsCltr.create = async(req,res) => {
@@ -63,6 +64,28 @@ roomsCltr.list = async (req,res) => {
     }
 }
 
+roomsCltr.updateRoompics = async (req,res) => {
+    try {
+        console.log('pic')
+        const multipleImagesUpload = async (files) => {
+            const uploadedImages = []
+            for(const file of files) {
+                const result = await cloudinary.uploader.upload(file.path,{folder: 'RoomPics'})
+                uploadedImages.push(result.secure_url)
+            }
+            return uploadedImages
+        }
+    
+        const pic = await multipleImagesUpload(req.files.pic)
+        console.log(pic)
+        //pic = roompic.map(ele => ele)
+        res.status(200).json(pic)
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({error: err})
+    }
+}
+
 roomsCltr.update = async (req,res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()) {
@@ -70,22 +93,20 @@ roomsCltr.update = async (req,res) => {
     }
     const id = req.params.id
     const buildingId = req.params.buildingid
-    const body = pick(req.body,['roomNo','sharing','amount'])
+    const body = pick(req.body,['roomNo','sharing','amount','pic'])
 
-    const multipleImagesUpload = async (files) => {
-        const uploadedImages = []
-        for(const file of files) {
-            const result = await cloudinary.uploader.upload(file.path,{folder: 'CloudImages'})
-            uploadedImages.push(result.secure_url)
-        }
-        return uploadedImages
-    }
+    // const multipleImagesUpload = async (files) => {
+    //     const uploadedImages = []
+    //     for(const file of files) {
+    //         const result = await cloudinary.uploader.upload(file.path,{folder: 'CloudImages'})
+    //         uploadedImages.push(result.secure_url)
+    //     }
+    //     return uploadedImages
+    // }
 
-    const roompic = await multipleImagesUpload(req.files.pic)
-    body.pic = roompic.map(ele => ele)
-
-    // const {files} = req
-    // body.pic = files['pic'] ? files['pic'].map(file => file.path) : [];
+    // const roompic = await multipleImagesUpload(req.files.pic)
+    // body.pic = roompic.map(ele => ele)
+    
     try {
         const room = await Room.findOneAndUpdate({_id: id,ownerId:req.user.id,buildingId: buildingId},body,{new:true})
         if(!room) {

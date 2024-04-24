@@ -13,7 +13,7 @@ const guestsValidationSchema = {
         trim:true,
         escape:true,
         isIn : {
-            options: [['Male','Female','Co-Living']],
+            options: [['male','female','others']],
             errorMessage: 'Gender should be selected from the given list'
         }
     },
@@ -41,16 +41,16 @@ const guestsValidationSchema = {
         trim: true,
         escape: true
     },
-    email: {
-        notEmpty: {
-            errorMessage: 'Email is required'
-        },
-        isEmail: {
-            errorMessage: 'Email must be of a valid format'
-        },
-        trim: true,
-        escape: true
-    },
+    // email: {
+    //     notEmpty: {
+    //         errorMessage: 'Email is required'
+    //     },
+    //     isEmail: {
+    //         errorMessage: 'Email must be of a valid format'
+    //     },
+    //     trim: true,
+    //     escape: true
+    // },
     address: {
         notEmpty: {
             errorMessage: 'Address is required'

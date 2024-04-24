@@ -120,6 +120,13 @@ upload.fields([
     {name: 'license'}
 ]),buildingsCltr.updateLicense)
 
+//editing roomspic upload
+app.post('/api/images/roompic',authenticateUser,authoriseUser(['owner']),
+upload.fields([
+    {name: 'pic'}
+]),roomsCltr.updateRoompics)
+
+
 //editing image upload
 // app.put('/api/images',authenticateUser,authoriseUser(['owner']),
 // upload.fields([

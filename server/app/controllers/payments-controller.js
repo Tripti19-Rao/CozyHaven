@@ -91,7 +91,7 @@ paymentsCltr.pay = async(req,res)=>{
        
         }
         
-        res.json({id:session.id,url:session.url,paymentId:payment._id,invoiceId:payment.invoiceId})
+        res.json({id:session.id,url:session.url,paymentId:payment._id,invoiceId:payment.invoiceId, buildingId: invoice.buildingId})
     }catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})
