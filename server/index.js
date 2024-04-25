@@ -182,6 +182,10 @@ app.put('/api/finders',authenticateUser,authoriseUser(['finder']),findersCltr.up
 //Getting One Finder
 app.get('/api/finders/findOne',authenticateUser,authoriseUser(['finder']),findersCltr.listOne)
 
+//Getting Wishlist of one Finder
+app.get('/api/finders/wishlist',authenticateUser,authoriseUser(['finder']),findersCltr.listWishlist)
+
+
 
 //GUEST
 //Create Guest

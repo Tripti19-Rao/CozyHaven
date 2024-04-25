@@ -148,7 +148,6 @@ buildingsCltr.listOne = async(req,res)=>{
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }
-
 }
 
 buildingsCltr.listOneBuilding = async (req,res) => {

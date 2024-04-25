@@ -5,8 +5,14 @@ const findersSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    wishList: [Schema.Types.ObjectId], //an array of buildingId's
-    paymentHistory : [Schema.Types.ObjectId] //an array of invoiceId's
+    wishList:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Building'
+      }], //an array of buildingId's
+    paymentHistory : [{
+        type: Schema.Types.ObjectId,
+        ref: 'Payment'
+      }] //an array of invoiceId's
 },{timestamps: true})
 
 const Finder = model('Finder',findersSchema)
