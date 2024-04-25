@@ -41,7 +41,6 @@ findersCltr.listOne = async (req,res) => {
         }
         return res.status(201).json(finder)
         //console.log(finder)
-
     } catch(err) {
         console.log(err)
         res.status(500).json({error: 'Internal Server Error'})
@@ -52,7 +51,7 @@ findersCltr.update = async (req,res) => {
     //const id = req.params.id
     const userid = req.user.id
     const {body} = req
-    body.userId = userid
+   
     try {
         const finder = await Finder.findOneAndUpdate({userId: userid},body,{new: true})
         if(!finder) {
