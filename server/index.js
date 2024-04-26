@@ -12,7 +12,9 @@ app.use(cors())
 
 //Configuring Database
 const configDB = require('./config/database')
+const cronPaymentJob = require('./config/cronTask/paymentCron')
 configDB()
+//cronPaymentJob()
 
 //Controllers
 const usersCltr = require('./app/controllers/users-controller')
@@ -41,6 +43,9 @@ const invoicesValdiationSchema = require('./app/validators/invoices-validation')
 const guestsValidationSchema = require('./app/validators/guests-validation')
 
 //Routes
+
+//route for example payment
+app.get('/api/pay',cronPaymentJob.pay)
 
 //User Register
 app.post('/api/users/register',checkSchema(userRegisterValidationSchema),usersCltr.register)
@@ -200,12 +205,12 @@ app.get('/api/:buildingid/guests',authenticateUser,authoriseUser(['owner']),gues
 app.get('/api/guests/pending-registration',authenticateUser,authoriseUser(['finder']),guestsCltr.listPendingReg)
 
 //Update Guest
-// app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
-//     {name: 'aadharPic'}
-// ]),checkSchema(guestsValidationSchema),guestsCltr.update)
+app.put('/api/buildings/:buildingid/guests',authenticateUser,authoriseUser(['finder']),upload.fields([
+    {name: 'aadharPic'}
+]),checkSchema(guestsValidationSchema),guestsCltr.update)
 
-//Delete Guest
-app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
+//Delete Guest - stay false
+app.put('/api/stay/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
 
 
 //REVIEWS
