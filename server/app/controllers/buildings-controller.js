@@ -436,52 +436,154 @@ buildingsCltr.disapprove = async(req,res)=>{
    }
 }
 
+// buildingsCltr.search = async (req,res) => {
+//    try {
+//       console.log(req.query)
+//       const search = req.query.address || ""
+//       const gender = req.query.gender || ""
+//       const sharing = req.query.sharing || ""
+//       // // let amenities = req.query.amenities || "All"
+//       // // let a = amenities.split(',').map(ele => new ObjectId(ele))
+//       // // console.log(a)
+//       // const amenitiesOption = await Amenity.find()
+//       // amenities = amenities === "All" ? amenitiesOption.map(option => option._id) : amenities.split(',');
+//       //console.log(amenitiesOption.map(ele =>(ele._id)).forEach(ele =>  ele))
+//       //buildings based on address & gender
+//       const buildings1 = await Building.find({address: { $regex: search, $options: "i" },...(gender && { gender:  gender}),isApproved:'Accepted'}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
+//       const buildings1Id = buildings1.map(ele => ele._id)
+//       //address: { $regex: search, $options: "i" },gender,
+//       //amenities: { $in: a 
+//       // .where("amenities")
+//       // .in([...amenities])
+
+//       const rooms = await Room.find({buildingId: {$in: buildings1Id},sharing})
+//       const buildingIds = rooms.map(ele => ele.buildingId)
+//       //buildings based on sharing
+//       const buildings2 = await Building.find({_id: {$in: buildingIds},isApproved:'Accepted'}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
+
+//       //combine both & remove duplicate copies of the same building
+//       const combinedBuildings = buildings1.concat(buildings2)
+//       const uniqueBuildingsId = []
+//       const filterdBuildings = combinedBuildings.filter(ele => {
+//          if(!uniqueBuildingsId.includes(ele._id.toString())) {
+//             uniqueBuildingsId.push(ele._id.toString())
+//             return true
+//          } else {
+//             return false
+//          }
+//       })
+//       //console.log(filterdBuildings.map(ele => ele._id))
+
+//       // const response = {
+//       //    error: false,
+//       //    //amenitiess: amenitiesOption.map(ele =>new ObjectId(ele._id)),
+//       //    buildingIds,
+//       //    filterdBuildings
+//       // }
+//       res.json(filterdBuildings)
+
+//    } catch(err) {
+//       console.log(err)
+//       res.status(500).json({error:'Internal Server Error'})
+//    }
+// }
+
 buildingsCltr.search = async (req,res) => {
    try {
       console.log(req.query)
       const search = req.query.address || ""
       const gender = req.query.gender || ""
-      const sharing = req.query.sharing || ""
-      // // let amenities = req.query.amenities || "All"
-      // // let a = amenities.split(',').map(ele => new ObjectId(ele))
-      // // console.log(a)
-      // const amenitiesOption = await Amenity.find()
-      // amenities = amenities === "All" ? amenitiesOption.map(option => option._id) : amenities.split(',');
-      //console.log(amenitiesOption.map(ele =>(ele._id)).forEach(ele =>  ele))
-      //buildings based on address & gender
-      const buildings1 = await Building.find({address: { $regex: search, $options: "i" },...(gender && { gender:  gender}),isApproved:'Accepted'}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
-      const buildings1Id = buildings1.map(ele => ele._id)
-      //address: { $regex: search, $options: "i" },gender,
-      //amenities: { $in: a 
-      // .where("amenities")
-      // .in([...amenities])
+      const amenities = req.query.amenities ? req.query.amenities.split(',') : [];
+      const order = req.query.price || ''
+      const sharing = req.query.sharing ? parseInt(req.query.sharing) : undefined
+      let page = req.query.page || 1
+      let limit = req.query.limit || 5
+      page = parseInt(page)
+      limit = parseInt(limit)
+      const searchQuery = {
+         address: {$regex: search, $options: 'i'}, 
+         ...gender && {gender: gender}, 
+         ...amenities.length > 0 && {amenities: { $in: amenities }},
+         isApproved:'Accepted',
+      }
 
-      const rooms = await Room.find({buildingId: {$in: buildings1Id},sharing})
-      const buildingIds = rooms.map(ele => ele.buildingId)
-      //buildings based on sharing
-      const buildings2 = await Building.find({_id: {$in: buildingIds},isApproved:'Accepted'}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
+      let buildings = await Building.find().populate('rooms.roomid',['sharing'])
+         .find(searchQuery)
+         
+         
+         
+      if(sharing) {
+         const buildingsMatchingSharing = buildings.filter(building => {
+            return building.rooms.some(ele => ele.roomid.sharing == sharing)
+         }).map(ele => ele._id)
+   
+         buildings = await Building.find({'_id': {$in: buildingsMatchingSharing}}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
+            //.sort({'_id': {$in: buildingsMatchingSharing} ? -1 : 1})
+            //.sort({ 'rooms.roomid.amount': order })
+            // .skip((page - 1) * limit)
+            // .limit(limit)
+      } else {
+         console.log(sharing)
+         // buildings = await Building.find(searchQuery).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
+         //    //.sort({'_id': {$in: buildingsMatchingSharing} ? -1 : 1})
+         //    .sort({ 'rooms.roomid.amount': order })
+         //    .skip((page - 1) * limit)
+         //    .limit(limit)
+         buildings = await Building.find(searchQuery).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
+         
+      }
 
-      //combine both & remove duplicate copies of the same building
-      const combinedBuildings = buildings1.concat(buildings2)
-      const uniqueBuildingsId = []
-      const filterdBuildings = combinedBuildings.filter(ele => {
-         if(!uniqueBuildingsId.includes(ele._id.toString())) {
-            uniqueBuildingsId.push(ele._id.toString())
-            return true
+      buildings.sort((a, b) => {
+         const lowestAmountA = Math.min(...a.rooms.map(room => room.roomid.amount));
+         const lowestAmountB = Math.min(...b.rooms.map(room => room.roomid.amount));
+         
+         if (order === 'asc') {
+           return lowestAmountA - lowestAmountB;
          } else {
-            return false
+           return lowestAmountB - lowestAmountA;
          }
-      })
-      //console.log(filterdBuildings.map(ele => ele._id))
+       });
+       
+       const total = buildings.length
+       console.log(total)
+       // Pagination
+       buildings = buildings.slice((page - 1) * limit, page * limit);
+       
+      // const buildingsMatchingSharing = [] , buildingsNotMatchingSharing = []
 
-      // const response = {
-      //    error: false,
-      //    //amenitiess: amenitiesOption.map(ele =>new ObjectId(ele._id)),
-      //    buildingIds,
-      //    filterdBuildings
+      // buildings1.forEach(building => {
+      //    if(building.rooms.some(ele => ele.roomid.sharing === sharing)) {
+      //       buildingsMatchingSharing.push(building)
+      //    } else {
+      //       buildingsNotMatchingSharing.push(building)
+      //    }
+      // })
+
+      // const sorter = (building , order) => {
+      //    return building.sort((a, b) => {
+      //       const minAmountA = Math.min(...a.rooms.map(room => room.roomid.amount));
+      //       const minAmountB = Math.min(...b.rooms.map(room => room.roomid.amount));
+      //       console.log('orde',order)
+      //       return order * (minAmountA - minAmountB);
+      //    })
       // }
-      res.json(filterdBuildings)
+      // const sortedBuildingWithSharing = sorter(buildingsMatchingSharing,order)
+      // const sortedBuildingWithNoSharing = sorter(buildingsNotMatchingSharing,order)
 
+      // const combinedBuildings = [...sortedBuildingWithSharing, ...sortedBuildingWithNoSharing]
+      // 
+      res.json(
+         {
+         buildings,
+         pagination:  {
+            total,
+            page,
+            totalPages: Math.ceil(total / limit)
+         }
+      
+      }
+      )
+      
    } catch(err) {
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
