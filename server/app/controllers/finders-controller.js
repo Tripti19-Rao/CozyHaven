@@ -47,6 +47,29 @@ findersCltr.listOne = async (req,res) => {
     }
 }
 
+
+findersCltr.listWishlist = async (req,res) => {
+    try {
+        const userid = req.user.id
+        const finder = await Finder.findOne({userId: userid}).populate({
+            path: 'wishList',
+            populate: [
+                { path: 'amenities' }, // Populate amenities within wishList
+                { path: 'rooms.roomid' } // Populate roomId within rooms within wishList
+            ]
+        }).populate('paymentHistory')
+        if(!finder) {
+            return res.status(404).json({message: 'Record Not Found'})
+        }
+        return res.status(201).json(finder)
+        //console.log(finder)
+
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+}
+
 findersCltr.update = async (req,res) => {
     //const id = req.params.id
     const userid = req.user.id
@@ -63,5 +86,6 @@ findersCltr.update = async (req,res) => {
         res.status(500).json({error: 'Internal Server Error'})
     }
 }
+
 
 module.exports = findersCltr

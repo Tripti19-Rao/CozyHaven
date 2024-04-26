@@ -15,7 +15,10 @@ const roomsSchema = new Schema({
     pic: [{
         type: String
     }],
-    guest: [Schema.Types.ObjectId]
+    guest: [{
+        type:Schema.Types.ObjectId,
+        ref:'Guest'
+    }]
 },{timestamps: true})
 
 const Room = model('Room',roomsSchema)

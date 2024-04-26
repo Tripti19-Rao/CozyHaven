@@ -12,7 +12,9 @@ app.use(cors())
 
 //Configuring Database
 const configDB = require('./config/database')
+const cronPaymentJob = require('./config/cronTask/paymentCron')
 configDB()
+//cronPaymentJob()
 
 //Controllers
 const usersCltr = require('./app/controllers/users-controller')
@@ -41,6 +43,9 @@ const invoicesValdiationSchema = require('./app/validators/invoices-validation')
 const guestsValidationSchema = require('./app/validators/guests-validation')
 
 //Routes
+
+//route for example payment
+app.get('/api/pay',cronPaymentJob.pay)
 
 //User Register
 app.post('/api/users/register',checkSchema(userRegisterValidationSchema),usersCltr.register)
@@ -182,6 +187,10 @@ app.put('/api/finders',authenticateUser,authoriseUser(['finder']),findersCltr.up
 //Getting One Finder
 app.get('/api/finders/findOne',authenticateUser,authoriseUser(['finder']),findersCltr.listOne)
 
+//Getting Wishlist of one Finder
+app.get('/api/finders/wishlist',authenticateUser,authoriseUser(['finder']),findersCltr.listWishlist)
+
+
 
 //GUEST
 //Create Guest
@@ -200,8 +209,8 @@ app.put('/api/buildings/:buildingid/guests',authenticateUser,authoriseUser(['fin
     {name: 'aadharPic'}
 ]),checkSchema(guestsValidationSchema),guestsCltr.update)
 
-//Delete Guest
-app.put('/api/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
+//Delete Guest - stay false
+app.put('/api/stay/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
 
 
 //REVIEWS

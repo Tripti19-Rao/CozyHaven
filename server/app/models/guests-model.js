@@ -12,7 +12,7 @@ const guestsSchema = new Schema({
     },
     userId: {
         type: Schema.Types.ObjectId
-    },//not required
+    },
     name: String,
     gender: String,
     dob: Date,
