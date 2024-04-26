@@ -380,12 +380,12 @@ buildingsCltr.approve = async(req,res)=>{
       const transporter = nodemailer.createTransport({
          service: 'gmail',
          auth: {
-           user: 'truptirao00@gmail.com',
-           pass: 'yroo edlq nfdi mkuu'
+            user: process.env.SECRET_EMAIL,
+            pass: process.env.SECRET_PASSWORD
          }
       })
       const mailOptions = {
-         from: 'truptirao00@gmail.com',
+         from: process.env.SECRET_EMAIL,
          to: `${email}`,
          subject: 'Approval of Your Paying Guest Building',
          text: `Dear Owner,\n\nWe are pleased to inform you that your Paying Guest building has been approved by our admin team at CozyHaven. Congratulations!\n\nYour building is now visible and accessible for further management on our platform. You can proceed to manage your building, view details, and make any necessary updates as needed.\n\nThank you for choosing CozyHaven for your property management needs. If you have any questions or require assistance, please feel free to reach out to our support team.\n\nBest regards,\n\nCozy Haven`,
@@ -412,12 +412,12 @@ buildingsCltr.disapprove = async(req,res)=>{
       const transporter = nodemailer.createTransport({
          service: 'gmail',
          auth: {
-           user: 'truptirao00@gmail.com',
-           pass: 'yroo edlq nfdi mkuu'
+            user: process.env.SECRET_EMAIL,
+            pass: process.env.SECRET_PASSWORD
          }
       })
       const mailOptions = {
-         from: 'truptirao00@gmail.com',
+         from: process.env.SECRET_EMAIL,
          to: `${email}`,
          subject: 'Notification Regarding Your Paying Guest Building',
          text: `Dear Owner,\n\nWe regret to inform you that your Paying Guest building submission has been rejected by our admin team at CozyHaven.\n\nUnfortunately, your building does not meet our criteria for approval at this time. If you have any questions or need further clarification, please don't hesitate to reach out to our support team.\n\nThank you for considering CozyHaven for your property management needs.\n\nBest regards,\n\nCozy Haven`,
