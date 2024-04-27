@@ -13,9 +13,13 @@ const guestsSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId
     },
+    profile: {
+        type: String
+    },
     name: String,
     gender: String,
     dob: Date,
+    age: Number,
     phoneNo: Number,
     email: String,
     address: String,

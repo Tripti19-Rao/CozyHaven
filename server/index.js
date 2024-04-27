@@ -240,6 +240,8 @@ app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['f
 //Updating Payment
 app.put('/api/payments/update/:stripId',authenticateUser,authoriseUser(['finder']),paymentsCltr.update)
 
+//Updating payment using payment id
+app.put('/api/payments/:paymentid',paymentsCltr.updateUsingPaymentId)
 
 //INVOICE
 //Create Invoice

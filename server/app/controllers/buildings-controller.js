@@ -572,18 +572,18 @@ buildingsCltr.search = async (req,res) => {
 
       // const combinedBuildings = [...sortedBuildingWithSharing, ...sortedBuildingWithNoSharing]
       // 
-      // res.json(
-      //    {
-      //    buildings,
-      //    pagination:  {
-      //       total,
-      //       page,
-      //       totalPages: Math.ceil(total / limit)
-      //    }
+      res.json(
+         {
+         buildings,
+         pagination:  {
+            total,
+            page,
+            totalPages: Math.ceil(total / limit)
+         }
       
-      // }
-      // )
-      res.json(buildings)
+      }
+      )
+      //res.json(buildings)
       
    } catch(err) {
       console.log(err)
