@@ -1,5 +1,6 @@
 const { pick } = require('lodash')
 const Finder = require('../models/finder-model')
+const { populate } = require('../models/guests-model')
 const findersCltr = {}
 
 findersCltr.create = async (req,res) => {
@@ -57,7 +58,27 @@ findersCltr.listWishlist = async (req,res) => {
                 { path: 'amenities' }, // Populate amenities within wishList
                 { path: 'rooms.roomid' } // Populate roomId within rooms within wishList
             ]
-        }).populate('paymentHistory')
+        }).populate({
+            path: 'paymentHistory',
+            populate: [
+                {
+                    path: 'invoiceId',
+                    select: '_id buildingId roomId',
+                    populate: [
+                        {
+                            path: 'buildingId',
+                            select: '_id name'
+                        },
+                        {
+                            path: 'roomId',
+                            select: '_id roomNo'
+                        }
+                    ]
+                }
+            ]
+        })
+
+        
         if(!finder) {
             return res.status(404).json({message: 'Record Not Found'})
         }

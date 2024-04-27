@@ -127,9 +127,23 @@ paymentsCltr.listOne = async(req,res)=>{
 paymentsCltr.update = async(req,res) =>{
     try{
         const stripId = req.params.stripId
-    const body = pick(req.body,['status'])
-    const payment = await Payment.findOneAndUpdate({transactionId:stripId},body,{new:true})
-    res.json(payment)
+        const body = pick(req.body,['status'])
+        const payment = await Payment.findOneAndUpdate({transactionId:stripId},body,{new:true})
+        res.json(payment)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({error:'Internal Server Error'})        
+    }
+}
+
+paymentsCltr.updateUsingPaymentId = async(req,res) =>{
+    try{
+        const id = req.params.paymentid
+        console.log('id',id)
+        const body = pick(req.body,['status'])
+        const payment = await Payment.findOneAndUpdate({_id: id},body,{new:true})
+        console.log(payment)
+        res.json(payment)
     }catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})        

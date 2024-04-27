@@ -227,7 +227,7 @@ app.put('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['fi
 app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['finder']),reviewsCltr.destroy)
 
 
-//PAYMENT
+/PAYMENT
 //Create Payment
 app.post('/api/create-checkout-session',authenticateUser,authoriseUser(['finder']),paymentsCltr.pay)
 
@@ -240,8 +240,10 @@ app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['f
 //Updating Payment
 app.put('/api/payments/update/:stripId',authenticateUser,authoriseUser(['finder']),paymentsCltr.update)
 
-//update link payment
-app.put('/api/link/payments/update/:id',paymentsCltr.linkUpdate)
+//Updating payment using payment id
+app.put('/api/payments/:paymentid',authenticateUser,authoriseUser(['finder']),paymentsCltr.updateUsingPaymentId)
+
+
 //INVOICE
 //Create Invoice
 app.post('/api/invoice',authenticateUser,authoriseUser(['finder']),checkSchema(invoicesValdiationSchema),InvoicesCltr.create)

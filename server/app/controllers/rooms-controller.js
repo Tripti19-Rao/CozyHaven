@@ -23,7 +23,7 @@ roomsCltr.create = async(req,res) => {
         const multipleImagesUpload = async (files) => {
             const uploadedImages = []
             for(const file of files) {
-                const result = await cloudinary.uploader.upload(file.path,{folder: 'CloudImages'})
+                const result = await cloudinary.uploader.upload(file.path,{folder: 'RoomsPic'})
                 uploadedImages.push(result.secure_url)
             }
             return uploadedImages
@@ -70,7 +70,7 @@ roomsCltr.updateRoompics = async (req,res) => {
         const multipleImagesUpload = async (files) => {
             const uploadedImages = []
             for(const file of files) {
-                const result = await cloudinary.uploader.upload(file.path,{folder: 'RoomPics'})
+                const result = await cloudinary.uploader.upload(file.path,{folder: 'RoomsPic'})
                 uploadedImages.push(result.secure_url)
             }
             return uploadedImages
