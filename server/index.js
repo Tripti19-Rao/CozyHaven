@@ -240,7 +240,8 @@ app.get('/api/:buildingid/payment/:paymentid',authenticateUser,authoriseUser(['f
 //Updating Payment
 app.put('/api/payments/update/:stripId',authenticateUser,authoriseUser(['finder']),paymentsCltr.update)
 
-
+//update link payment
+app.put('/api/link/payments/update/:id',paymentsCltr.linkUpdate)
 //INVOICE
 //Create Invoice
 app.post('/api/invoice',authenticateUser,authoriseUser(['finder']),checkSchema(invoicesValdiationSchema),InvoicesCltr.create)
