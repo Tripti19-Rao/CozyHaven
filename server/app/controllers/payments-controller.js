@@ -150,4 +150,16 @@ paymentsCltr.updateUsingPaymentId = async(req,res) =>{
     }
 }
 
+paymentsCltr.linkUpdate = async(req,res)=>{
+    try{
+        const id = req.params.id
+        const body = pick(req.body,['stay'])
+        const payment = await Payment.findOneAndUpdate({_id:id}, body,{new:true})
+        res.json(payment)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({error:'Internal Server Error'})       
+    }
+}
+
 module.exports = paymentsCltr
