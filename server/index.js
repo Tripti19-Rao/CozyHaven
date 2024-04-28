@@ -227,7 +227,7 @@ app.put('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['fi
 app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser(['finder']),reviewsCltr.destroy)
 
 
-/PAYMENT
+//PAYMENT
 //Create Payment
 app.post('/api/create-checkout-session',authenticateUser,authoriseUser(['finder']),paymentsCltr.pay)
 
