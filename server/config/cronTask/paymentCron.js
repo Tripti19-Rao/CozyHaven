@@ -113,7 +113,7 @@ const cronPaymentJob = {}
                     payment.paymentType = "card"
                     payment.amount = Number(ele.amount)
                     await payment.save()
-                    console.log(session.url)
+                    //console.log(session.url)
 
                     const finder = await Finder.findOne({userId: ele.userId})
                         if(finder) {

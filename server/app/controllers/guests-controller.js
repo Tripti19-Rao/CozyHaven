@@ -138,13 +138,17 @@ guestsCltr.update = async (req,res) => {
     }
     //const id = req.params.id
     const buildingId = req.params.buildingid
-    const body = pick(req.body,['name','gender','dob','phoneNo','address','aadharNo','qualification','guardian','guardianNo','isComplete'])
+    const body = pick(req.body,['name','profile','gender','age','dob','phoneNo','address','aadharNo','qualification','guardian','guardianNo','isComplete'])
 
-    const singleImageUpload = async (file) => {
-        const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
+    const singleImageUpload = async (file, folderName) => {
+        const result = await cloudinary.uploader.upload(file.path, { folder: folderName });
         return result.secure_url
     };
-    const aadharPic = await singleImageUpload(req.files.aadharPic[0]); // Use [0] to get the first file from the array
+
+    const profile = await singleImageUpload(req.files.profile[0], 'GuestProfile'); // Use [0] to get the first file from the array
+    body.profile = profile
+
+    const aadharPic = await singleImageUpload(req.files.aadharPic[0], 'Aadhar'); // Use [0] to get the first file from the array
     body.aadharPic = aadharPic
     //body.aadharPic = req.files['aadharPic'] ? req.files['aadharPic'].map(file => file.path) : []
     try {
