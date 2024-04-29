@@ -27,6 +27,16 @@ const guestsValidationSchema = {
         trim: true,
         escape: true
     },
+    age: {
+        notEmpty: {
+            errorMessage: 'Age is required'
+        },
+        isNumeric: {
+            errorMessage: 'Age must be a Number'
+        },
+        trim: true,
+        escape: true
+    },
     phoneNo: {
         notEmpty: {
             errorMessage: 'Phone Number is required'

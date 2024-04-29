@@ -6,6 +6,7 @@ const Invoice = require('../../app/models/invoices-model')
 const Finder = require('../../app/models/finder-model')
 const Payment = require('../../app/models/payments-model')
 const Guest = require('../../app/models/guests-model')
+const jwt = require('jsonwebtoken')
 const cronPaymentJob = {}
 
     //use this in post man to see agregated data
@@ -82,6 +83,12 @@ const cronPaymentJob = {}
                     })
                     const payment = new Payment()
 
+                    const tokenData = {
+                        paymentId: payment._id
+                    }
+
+                    const token = jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn:'14d'})
+
                     const session = await stripe.checkout.sessions.create({
                         payment_method_types:["card"],
                         line_items:[{
@@ -95,8 +102,8 @@ const cronPaymentJob = {}
                             quantity: 1
                         }],
                         mode:"payment",
-                        success_url:`http://localhost:3000/success?paymentId=${payment._id}`,
-                        cancel_url: `http://localhost:3000/cancel?paymentId=${payment._id}`,
+                        success_url:`http://localhost:3000/success?token=${token}`,
+                        cancel_url: `http://localhost:3000/cancel?token=${token}`,
                         customer : customer.id
                     })
                     // const payment = new Payment()
@@ -106,7 +113,7 @@ const cronPaymentJob = {}
                     payment.paymentType = "card"
                     payment.amount = Number(ele.amount)
                     await payment.save()
-                    console.log(session.url)
+                    //console.log(session.url)
 
                     const finder = await Finder.findOne({userId: ele.userId})
                         if(finder) {
@@ -116,18 +123,29 @@ const cronPaymentJob = {}
                         }
                     
                         const guest = await Guest.findOne({userId: ele.userId,buildingId: ele.buildingId})
+                            .populate({
+                                path: 'buildingId',
+                                select: 'name'
+                            })
                         if(guest) {
                             guest.invoiceHistory = [...guest.invoiceHistory, ele._id]
                             guest.paymentHistory = [...guest.paymentHistory, payment._id]
                             await guest.save()
                         }
                         console.log(guest.email)
+
+                        const sessionData = {
+                            sessionUrl: session.url,
+                        }
+    
+                        const sessionUrl = jwt.sign(sessionData,process.env.JWT_SECRET,{expiresIn:'14d'})
                         
                         const mailOptions = {
                             from: process.env.SECRET_EMAIL,
                             to: guest.email,
                             subject: 'Sending Email using Node.js',
-                            text: `Hello ${guest.name}, here is your rent payment link: ${session.url}`,
+                            html: `<p>Hello ${guest.name},</p>
+                            <p>Click <a href="http://localhost:3000/payment-link?session=${sessionUrl}">here</a> to pay your rent for ${guest.buildingId.name}.</p>`,
                         };
                         transporter.sendMail(mailOptions, function (error, info) {
                             if (error) {

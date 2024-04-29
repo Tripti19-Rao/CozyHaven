@@ -195,7 +195,8 @@ app.get('/api/finders/wishlist',authenticateUser,authoriseUser(['finder']),finde
 //GUEST
 //Create Guest
 app.post('/api/:buildingid/:roomid/guests',authenticateUser,authoriseUser(['finder']),upload.fields([
-    {name: 'aadharPic'}
+    {name: 'aadharPic'},
+    {name: 'profile'}
 ]),checkSchema(guestsValidationSchema),getOwnerId,guestsCltr.create)
 
 //Listing Guests
@@ -206,6 +207,7 @@ app.get('/api/guests/pending-registration',authenticateUser,authoriseUser(['find
 
 //Update Guest
 app.put('/api/buildings/:buildingid/guests',authenticateUser,authoriseUser(['finder']),upload.fields([
+    {name: 'profile'},
     {name: 'aadharPic'}
 ]),checkSchema(guestsValidationSchema),guestsCltr.update)
 
@@ -242,7 +244,6 @@ app.put('/api/payments/update/:stripId',authenticateUser,authoriseUser(['finder'
 
 //Updating payment using payment id
 app.put('/api/payments/:paymentid',authenticateUser,authoriseUser(['finder']),paymentsCltr.updateUsingPaymentId)
-
 
 //INVOICE
 //Create Invoice
