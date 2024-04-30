@@ -53,7 +53,9 @@ roomsCltr.create = async(req,res) => {
 roomsCltr.list = async (req,res) => {
     try{
         const buildingId = req.params.buildingid
-        const rooms = await Room.find({ownerId:req.user.id,buildingId: buildingId})
+        const rooms = await Room.find({ownerId:req.user.id,buildingId: buildingId}).populate({
+            path: 'guest'
+        })
         if(!rooms) {
             return res.status(404).json({message: 'Record Not Found'})
         }

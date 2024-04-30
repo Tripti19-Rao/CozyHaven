@@ -190,6 +190,8 @@ app.get('/api/finders/findOne',authenticateUser,authoriseUser(['finder']),finder
 //Getting Wishlist of one Finder
 app.get('/api/finders/wishlist',authenticateUser,authoriseUser(['finder']),findersCltr.listWishlist)
 
+//my pg
+app.get('/api/finders/:id/my', authenticateUser, authoriseUser(['finder']),findersCltr.mine)
 
 
 //GUEST

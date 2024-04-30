@@ -1,6 +1,7 @@
 const { pick } = require('lodash')
 const Finder = require('../models/finder-model')
 const { populate } = require('../models/guests-model')
+const Guest = require('../models/guests-model')
 const findersCltr = {}
 
 findersCltr.create = async (req,res) => {
@@ -102,6 +103,32 @@ findersCltr.update = async (req,res) => {
             return res.status(404).json({message: 'Record Not Found'})
         }
         return res.json(finder)
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+}
+
+//get all the buildings the user stayed in 
+findersCltr.mine = async (req,res) => {
+    const finderid = req.params.id
+    try {
+        const myBuildings = await Guest.find({finderId: finderid}).populate({
+            path: 'buildingId',
+            select: '_id profilePic rooms name gender address contact amenities rating ',
+            populate: [
+                {
+                    path: 'amenities',
+                    select: '_id name iconName'
+                },
+                {
+                    path: 'rooms.roomid',
+                    select: '_id amount sharing guest'
+                }
+            ]
+
+        }).sort({ _id: -1 })
+        res.status(201).json(myBuildings)
     } catch(err) {
         console.log(err)
         res.status(500).json({error: 'Internal Server Error'})
