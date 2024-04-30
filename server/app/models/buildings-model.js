@@ -31,7 +31,10 @@ const buildingsSchema = new Schema({
         lat:String,
         lng:String
     },
-    rating:String,
+    rating:{
+        type:Number,
+        default:0
+    },
     isApproved:{
         type:String,
         default:'Pending'

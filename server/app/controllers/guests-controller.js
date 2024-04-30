@@ -187,4 +187,20 @@ guestsCltr.destroy = async (req,res) => {
     }
 }
 
+guestsCltr.check = async(req,res)=>{
+    try{
+        const buildingId = req.params.buildingid
+    const finderId = req.params.finderid
+    console.log("finderid", finderId)
+    console.log("buildingId", buildingId)
+    const check = await Guest.findOne({buildingId:buildingId,finderId:finderId})
+    res.json(check)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({error: 'Internal Server Error'})
+
+    }
+    
+}
+
 module.exports = guestsCltr

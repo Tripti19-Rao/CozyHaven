@@ -1,11 +1,11 @@
 const reviewsValidationSchema = {
-    name:{
-        notEmpty:{
-            errorMessage:'Name is required'
-        },
-        trim:true,
-        escape:true
-    },
+    // name:{
+    //     notEmpty:{
+    //         errorMessage:'Name is required'
+    //     },
+    //     trim:true,
+    //     escape:true
+    // },
     stars:{
         notEmpty:{
             errorMessage:'Stars is required'
@@ -18,11 +18,8 @@ const reviewsValidationSchema = {
         escape:true
     },
     description:{
-        notEmpty:{
-            errorMessage:'Description is required'
-        },
         isLength:{
-            options:{min:10, max:500},
+            options:{min:0, max:500},
             errorMessage:'Description should be within 500 characters long'
         },
         trim:true,

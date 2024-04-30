@@ -9,15 +9,15 @@ const getUserName = async (req,res,next)=>{
         //Checking if User has already posted a review
         const check = await Review.findOne({userId:id,buildingId:buildingid})
         if(check){
-            return res.status(400).json({error:'You can only write one review'})
+            return res.status(404).json({error:'You can only write one review'})
         }
         //Check if the User exists
         const user = await User.findOne({_id:id})
         if(!user){
             return res.status(400).json({error:'User doesnt exist'})
         }
-        const {body} = req
-        body.name=user.username
+        // const {body} = req
+        // body.name=user.username
         next()
     } catch(err) {
         console.log(err)

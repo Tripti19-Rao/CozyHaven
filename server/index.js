@@ -214,6 +214,8 @@ app.put('/api/buildings/:buildingid/guests',authenticateUser,authoriseUser(['fin
 //Delete Guest - stay false
 app.put('/api/stay/:buildingid/guests/:id',authenticateUser,authoriseUser(['owner']),guestsCltr.destroy)
 
+//Check if guest
+app.get('/api/:buildingid/member/:finderid',authenticateUser,authoriseUser(['finder']),guestsCltr.check)
 
 //REVIEWS
 //Create Review
