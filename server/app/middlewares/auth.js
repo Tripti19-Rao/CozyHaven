@@ -10,7 +10,8 @@ const authenticateUser = (req, res, next) => {
         req.user = {
             id: tokenData.id,
             role: tokenData.role,
-            email:tokenData.email
+            email:tokenData.email,
+            name: tokenData.name
         }
         next()
     } catch (err) {

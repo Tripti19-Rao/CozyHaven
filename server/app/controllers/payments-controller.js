@@ -72,6 +72,7 @@ paymentsCltr.pay = async(req,res)=>{
             const guest = new Guest()
             guest.finderId = finder._id
             guest.userId = req.user.id
+            guest.name = req.user.name
             guest.buildingId = invoice.buildingId
             guest.roomId = invoice.roomId
             guest.email = req.user.email
@@ -80,12 +81,12 @@ paymentsCltr.pay = async(req,res)=>{
             //guest.dateOfJoin = invoice.createdAt
             await guest.save()
             const room = await Room.findOneAndUpdate({_id: invoice.roomId},{$push:{ guest: guest._id}},{new:true})
-            console.log(room)
+            // console.log(room)
         } else {
             //if the guset is already present then update the paymentHistory
             //guest.invoiceHistory = [...guest.invoiceHistory, payment.invoiceId]
             guest.paymentHistory = [...guest.paymentHistory, payment._id]
-            console.log(guest)
+            //console.log(guest)
             await guest.save()
         }
        

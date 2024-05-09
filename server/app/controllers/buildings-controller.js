@@ -523,7 +523,6 @@ buildingsCltr.search = async (req,res) => {
             // .skip((page - 1) * limit)
             // .limit(limit)
       } else {
-         console.log(sharing)
          // buildings = await Building.find(searchQuery).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
          //    //.sort({'_id': {$in: buildingsMatchingSharing} ? -1 : 1})
          //    .sort({ 'rooms.roomid.amount': order })
@@ -545,7 +544,6 @@ buildingsCltr.search = async (req,res) => {
        });
        
        const total = buildings.length
-       console.log(total)
        // Pagination
        buildings = buildings.slice((page - 1) * limit, page * limit);
        

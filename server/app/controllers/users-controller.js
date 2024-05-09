@@ -56,7 +56,8 @@ usersCltr.login = async(req,res)=>{
         const tokenData= {
             id:user._id,
             role:user.role,
-            email:user.email
+            email:user.email,
+            name: user.username
         }
         const token = jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn:'14d'})
 
