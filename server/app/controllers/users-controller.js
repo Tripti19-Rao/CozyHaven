@@ -84,6 +84,7 @@ usersCltr.login = async(req,res)=>{
     }
 }
 
+
 usersCltr.account = async (req,res) => {
     try {
         const id = req.user.id
@@ -94,6 +95,16 @@ usersCltr.account = async (req,res) => {
         const user1 = pick(user,['_id','username','email','role'])
         return res.status(201).json(user1)
     } catch(err){
+        console.log(err)
+        res.status(500).json({errors:'Internal Server Error'})
+    }
+}
+
+usersCltr.getData = async(req,res)=>{
+    try{
+        const users = await User.find().select('_id role')
+        res.json(users)
+    }catch(err){
         console.log(err)
         res.status(500).json({errors:'Internal Server Error'})
     }

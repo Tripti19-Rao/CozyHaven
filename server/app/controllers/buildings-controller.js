@@ -589,4 +589,14 @@ buildingsCltr.search = async (req,res) => {
    }
 }
 
+buildingsCltr.getData = async(req,res)=>{
+   try{
+      const buildings = await Building.find()
+      res.json(buildings)
+   }catch(err){
+      console.log(err)
+      res.status(500).json({error:'Internal Server Error'})
+   }
+}
+
 module.exports = buildingsCltr

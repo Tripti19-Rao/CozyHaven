@@ -60,10 +60,16 @@ app.get('/api/users/account',authenticateUser,authoriseUser(['admin','owner','fi
 //ADMIN 
 //Approval of building
 
+//Admin getting all chart data
+app.get('/api/chart/users',authenticateUser,authoriseUser(['admin']),usersCltr.getData )
+
+//List all the building for charts
+app.get('/api/chart/buildings',authenticateUser,authoriseUser(['admin']),buildingsCltr.getData)
+
 //list all the building whoes approval is Pending
 app.get('/api/buildings/approval',authenticateUser,authoriseUser(['admin']),buildingsCltr.listPendingApproval)
 
-//list all the building whoes approval is Accepted
+//list all the building whoes approval is Accepted - not required
 app.get('/api/buildings/approved',authenticateUser,authoriseUser(['admin']),buildingsCltr.approved)
 
 //change the aprroval status to Accepted
