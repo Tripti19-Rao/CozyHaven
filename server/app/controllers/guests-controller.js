@@ -63,7 +63,6 @@ guestsCltr.list = async (req,res) => {
         sortQuery['roomId.amount'] = order === 'asc' ? 1 : -1;
         page = parseInt(page)
         limit = parseInt(limit)
-
         const guests = await Guest.find({ buildingId: buildingId }).populate('roomId').populate('invoiceHistory').populate('paymentHistory')
         .find(searchQuery)
         //.sort(sortQuery)
