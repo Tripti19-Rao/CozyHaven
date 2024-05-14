@@ -1,4 +1,4 @@
-const {Schema, model} = require('mongoose')
+const { Schema , model } = require('mongoose')
 
 const roomsSchema = new Schema({
     ownerId: {

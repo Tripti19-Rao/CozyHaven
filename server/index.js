@@ -2,7 +2,7 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-const {checkSchema} = require('express-validator')
+const { checkSchema } = require('express-validator')
 const app = express()
 const port  = 3055
 
@@ -13,8 +13,9 @@ app.use(cors())
 //Configuring Database
 const configDB = require('./config/database')
 const cronPaymentJob = require('./config/cronTask/paymentCron')
+
 configDB()
-//cronPaymentJob()
+cronPaymentJob.start()
 
 //Controllers
 const usersCltr = require('./app/controllers/users-controller')
@@ -28,24 +29,21 @@ const guestsCltr = require('./app/controllers/guests-controller')
 const findersCltr = require('./app/controllers/finders-controller')
 
 //Route level Middlewares
-const {authenticateUser,authoriseUser} = require('./app/middlewares/auth')
+const { authenticateUser , authoriseUser } = require('./app/middlewares/auth')
 const upload = require('./app/middlewares/multer')
-const {getUserName, getOwnerId, getOwnerEmail} = require('./app/middlewares/fetcher')
+const { getUserName, getOwnerId, getOwnerEmail } = require('./app/middlewares/fetcher')
 
 //Validations
-const {userRegisterValidationSchema, userLoginValidationSchema} = require('./app/validators/users-validation')
-const {buildingsValidationSchema,buildingsEditValidationSchema,buildingsAprrovalValidationSchema} = require('./app/validators/buildings-validation')
-const roomsValidationSchema = require('./app/validators/rooms-validation')
-const {reviewsValidationSchema, reviewsUpdateValidationSchema} = require('./app/validators/reviews-validation')
+const { userRegisterValidationSchema, userLoginValidationSchema } = require('./app/validators/users-validation')
+const { buildingsValidationSchema,buildingsEditValidationSchema } = require('./app/validators/buildings-validation')
+const { roomsValidationSchema , roomsEditValidationSchema } = require('./app/validators/rooms-validation')
+const { reviewsValidationSchema, reviewsUpdateValidationSchema } = require('./app/validators/reviews-validation')
 const amenitiesValidationSchema = require('./app/validators/amenities-validation')
 const paymentsValidationSchema = require('./app/validators/payments-validation')
 const invoicesValdiationSchema = require('./app/validators/invoices-validation')
 const guestsValidationSchema = require('./app/validators/guests-validation')
 
 //Routes
-
-//route for example payment
-app.get('/api/pay',cronPaymentJob.pay)
 
 //User Register
 app.post('/api/users/register',checkSchema(userRegisterValidationSchema),usersCltr.register)
@@ -86,47 +84,41 @@ app.post('/api/buildings',authenticateUser,authoriseUser(['owner']),upload.field
     {name: 'license'}
 ]), checkSchema(buildingsValidationSchema),buildingsCltr.create)
 
-//Listing Buildings
-// app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),buildingsCltr.list)
-
 //List a owners buildings
 app.get('/api/buildings',authenticateUser,authoriseUser(['owner']),buildingsCltr.listOne)
 
 //List One Building
 app.get('/api/buildings/one/:id',authenticateUser,authoriseUser(['finder']),buildingsCltr.listOneBuilding)
 
-
 //Delete Building
 app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.destroy)
 
-
 //Edit a building
-app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.update)
+app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),checkSchema(buildingsEditValidationSchema),buildingsCltr.update)
 
-//Editing amenties images uplaod
+//Editing amenties images upload
 app.post('/api/images/amenities',authenticateUser,authoriseUser(['owner']),
 upload.fields([
     {name: 'amenitiesPic'}
 ]),buildingsCltr.updateAmenities)
 
-//Editing profile image uplaod
+//Editing profile image upload
 app.post('/api/images/profile',authenticateUser,authoriseUser(['owner']),
 upload.fields([
     {name: 'profilePic', maxCount: 1}
 ]),buildingsCltr.updateProfilePic)
 
-//Editing license images uplaod
+//Editing license images upload
 app.post('/api/images/license',authenticateUser,authoriseUser(['owner']),
 upload.fields([
     {name: 'license'}
 ]),buildingsCltr.updateLicense)
 
-//Editing roomspic upload
+//Editing rooms images upload
 app.post('/api/images/roompic',authenticateUser,authoriseUser(['owner']),
 upload.fields([
     {name: 'pic'}
 ]),roomsCltr.updateRoompics)
-
 
 //Searching Buildings
 app.get('/api/search',buildingsCltr.search)
@@ -142,9 +134,7 @@ app.post('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),uplo
 app.get('/api/:buildingid/rooms',authenticateUser,authoriseUser(['owner']),roomsCltr.list)
 
 //Update Room
-app.put('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),upload.fields([
-    {name: 'pic'}
-]),checkSchema(roomsValidationSchema),roomsCltr.update)
+app.put('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),checkSchema(roomsEditValidationSchema),roomsCltr.update)
 
 //Delete Room
 app.delete('/api/:buildingid/rooms/:id',authenticateUser,authoriseUser(['owner']),roomsCltr.destroy)
@@ -230,7 +220,7 @@ app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser([
 //Create Payment
 app.post('/api/create-checkout-session',authenticateUser,authoriseUser(['finder']),checkSchema(paymentsValidationSchema),paymentsCltr.pay)
 
-//Listing Payments - for whom?
+//Listing Payments 
 app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),paymentsCltr.list)
 
 //Listing particular Payment
@@ -241,6 +231,7 @@ app.put('/api/payments/update/:stripId',authenticateUser,authoriseUser(['finder'
 
 //Updating payment using payment id
 app.put('/api/payments/:paymentid',authenticateUser,authoriseUser(['finder']),paymentsCltr.updateUsingPaymentId)
+
 
 //INVOICE 
 //Create Invoice
@@ -257,6 +248,3 @@ app.delete('/api/invoice/:id',authenticateUser,authoriseUser(['finder']),Invoice
 app.listen(port , ()=>{
     console.log("server running on port " + port)
 })
-
-
-
