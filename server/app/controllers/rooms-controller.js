@@ -15,10 +15,6 @@ roomsCltr.create = async(req,res) => {
     const buildingId = req.params.buildingid
     const body = pick(req.body,['roomNo','sharing','amount'])
 
-    // if(isEmpty(req.files)) {
-    //     return res.status(400).json({message: 'please upload the room images'})
-    // }
-
     try{
         const multipleImagesUpload = async (files) => {
             const uploadedImages = []
@@ -68,7 +64,6 @@ roomsCltr.list = async (req,res) => {
 
 roomsCltr.updateRoompics = async (req,res) => {
     try {
-        console.log('pic')
         const multipleImagesUpload = async (files) => {
             const uploadedImages = []
             for(const file of files) {
@@ -79,8 +74,6 @@ roomsCltr.updateRoompics = async (req,res) => {
         }
     
         const pic = await multipleImagesUpload(req.files.pic)
-        console.log(pic)
-        //pic = roompic.map(ele => ele)
         res.status(200).json(pic)
     } catch(err) {
         console.log(err)
@@ -97,18 +90,6 @@ roomsCltr.update = async (req,res) => {
     const buildingId = req.params.buildingid
     const body = pick(req.body,['roomNo','sharing','amount','pic'])
 
-    // const multipleImagesUpload = async (files) => {
-    //     const uploadedImages = []
-    //     for(const file of files) {
-    //         const result = await cloudinary.uploader.upload(file.path,{folder: 'CloudImages'})
-    //         uploadedImages.push(result.secure_url)
-    //     }
-    //     return uploadedImages
-    // }
-
-    // const roompic = await multipleImagesUpload(req.files.pic)
-    // body.pic = roompic.map(ele => ele)
-    
     try {
         const room = await Room.findOneAndUpdate({_id: id,ownerId:req.user.id,buildingId: buildingId},body,{new:true})
         if(!room) {
@@ -124,7 +105,6 @@ roomsCltr.update = async (req,res) => {
 roomsCltr.destroy = async (req,res) => {
     const id = req.params.id
     const buildingId = req.params.buildingid
-    //console.log('id',id,'build',buildingId,'owner', req.user.id )
     try{
         const room = await Room.findOneAndDelete({_id: id,ownerId:req.user.id,buildingId: buildingId})
         if(!room) {
@@ -136,7 +116,6 @@ roomsCltr.destroy = async (req,res) => {
         if(building) {
         const roomObjectId =  (room._id); // Convert room._id to ObjectId
         const filteredRooms = building.rooms.filter(ele => !(ele.roomid).equals(roomObjectId));
-            //console.log(filteredRooms);
             building.rooms = filteredRooms
             await building.save()
         }

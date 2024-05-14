@@ -5,7 +5,7 @@ const paymentsSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"User"
     },
-    transactionId:String, //Session onject id
+    transactionId:String, //Session object id
     invoiceId:{
         type:Schema.Types.ObjectId,
         ref:"Invoice"

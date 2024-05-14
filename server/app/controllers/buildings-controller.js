@@ -3,63 +3,9 @@ const {pick} = require('lodash')
 const Building = require('../models/buildings-model')
 const nodemailer = require('nodemailer');
 const buildingsCltr= {}
-// const ObjectId = require('mongoose').Types.ObjectId;
-// const Amenity = require('../models/amenities-model')
 const Room = require('../models/rooms-model');
-//const mongoose = require('mongoose');
 const cloudinary = require('../middlewares/cloudinary')
 
-// buildingsCltr.create = async(req,res)=>{
-//    const errors = validationResult(req)
-//    if(!errors.isEmpty()){
-//     return res.status(400).json({errors:errors.array()})
-//    }
-//    try{
-//     const body = pick(req.body,['name','address','contact','deposit','rules','geolocation.lat','geolocation.lng','amenities','gender'])
-
-//     //images
-//     if (!req.files || Object.keys(req.files).length === 0) {
-//       return res.status(400).json({ message: 'No files were uploaded.' });
-//   }
-
-//   const singleImageUpload = async (file) => {
-//       const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
-//       return {
-//           url: result.secure_url,
-//           cloudinary_id: result.public_id
-//       };
-//   };
-
-//   const profilePic = await singleImageUpload(req.files.profilePic[0]); // Use [0] to get the first file from the array
-//   const license = await singleImageUpload(req.files.license[0]); // Use [0] to get the first file from the array
-
-//   const multipleImagesUpload = async (files) => {
-//       const uploadedImages = [];
-//       for (const file of files) {
-//           const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
-//           uploadedImages.push({
-//               url: result.secure_url,
-//               cloudinary_id: result.public_id
-//           });
-//       }
-//       return uploadedImages;
-//   };
-
-//   const amenitiesPic = await multipleImagesUpload(req.files.amenitiesPic);
-
-
-//     const building = new Building(body)
-//     building.ownerId = req.user.id
-//     building.profilePic = profilePic.url;
-//     building.license = license.url;
-//     building.amenitiesPic = amenitiesPic.map(pic => pic.url);
-//     await building.save()
-//     res.status(200).json(building)
-//    }catch(err){
-//     console.log(err)
-//     res.status(500).json({error:'Internal Server Error'})
-//    }
-// }
 
 buildingsCltr.create = async (req, res) => {
    const errors = validationResult(req);
@@ -178,26 +124,6 @@ buildingsCltr.destroy = async(req,res)=>{
    }
 }
 
-// buildingsCltr.update = async(req,res)=>{
-//    const errors = validationResult(req)
-//    if(!errors.isEmpty()){
-//       return res.status(400).json({errors:errors.array()})
-//    }
-//    const id = req.params.id
-//    const {body} = req
-//    const name = pick(req.body,['name'])
-//    console.log(name)
-//    // body.profilePic = req.files['profilePic'] ? req.files['profilePic'][0].path : null;
-//    // body.amenitiesPic = req.files['amenitiesPic'] ? req.files['amenitiesPic'].map(file => file.path) : [];
-//    // body.license = req.files['license'] ? req.files['license'].map(file => file.path) : [];
-//    try{
-//       const building = await Building.findOneAndUpdate({_id:id},body,{new:true})
-//       res.json(building)
-//    }catch(err){
-//       console.log(err)
-//       res.status(500).json({error:'Internal Server Error'})
-//    }
-// }
 
 buildingsCltr.updateAmenities = async(req, res)=>{
    try{
@@ -231,7 +157,7 @@ buildingsCltr.updateProfilePic = async(req, res)=>{
              cloudinary_id: result.public_id
          };
      };
-     const profilePic = await singleImageUpload(req.files.profilePic[0]); // Use [0] to get the first file from the array
+     const profilePic = await singleImageUpload(req.files.profilePic[0]); 
    
       const profilePicture = profilePic.url
       res.status(200).json(profilePicture)
@@ -251,7 +177,7 @@ buildingsCltr.updateLicense = async(req, res)=>{
              cloudinary_id: result.public_id
          };
      };
-     const license = await singleImageUpload(req.files.license[0]); // Use [0] to get the first file from the array
+     const license = await singleImageUpload(req.files.license[0]); 
    
       const licensePicture = license.url
       res.status(200).json(licensePicture)
@@ -272,7 +198,6 @@ buildingsCltr.update = async (req, res) => {
      const body = pick(req.body, ['name', 'address', 'contact', 'deposit', 'rules', 'geolocation.lat', 'geolocation.lng', 'amenities', 'gender','amenitiesPic', 'license', 'profilePic']);
      const building = await Building.findByIdAndUpdate(req.params.id, body, { new: true });
      res.status(200).json(building);
-     // Check if any files were uploaded
 }
     catch (err) {
      console.log(err);
@@ -280,73 +205,6 @@ buildingsCltr.update = async (req, res) => {
    }
  };
  
-
-// buildingsCltr.update = async (req, res) => {
-//    const errors = validationResult(req);
-//    if (!errors.isEmpty()) {
-//      return res.status(400).json({ errors: errors.array() });
-//    }
- 
-//    try {
-//      const body = pick(req.body, ['name', 'address', 'contact', 'deposit', 'rules', 'geolocation.lat', 'geolocation.lng', 'amenities', 'gender']);
- 
-//      // Check if any files were uploaded
-//      if (!req.files || Object.keys(req.files).length === 0) {
-//        // No files uploaded, proceed with updating other data
-//        const building = await Building.findByIdAndUpdate(req.params.id, body, { new: true });
-//        return res.status(200).json(building);
-//      }
- 
-//      // Define multipleImagesUpload function
-//      const multipleImagesUpload = async (files) => {
-//        const uploadedImages = [];
-//        for (const file of files) {
-//          const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
-//          uploadedImages.push({
-//            url: result.secure_url,
-//            cloudinary_id: result.public_id,
-//          });
-//        }
-//        return uploadedImages;
-//      };
- 
-//      // Files were uploaded, handle file uploads
-//      const singleImageUpload = async (file) => {
-//        const result = await cloudinary.uploader.upload(file.path, { folder: 'CloudImages' });
-//        return {
-//          url: result.secure_url,
-//          cloudinary_id: result.public_id,
-//        };
-//      };
- 
-//      // Update profilePic if a new file is uploaded
-//      if (req.files.profilePic) {
-//        const profilePic = await singleImageUpload(req.files.profilePic[0]);
-//        body.profilePic = profilePic.url;
-//      }
- 
-//      // Update license if a new file is uploaded
-//      if (req.files.license) {
-//        const license = await singleImageUpload(req.files.license[0]);
-//        body.license = license.url;
-//      }
- 
-//      // Update amenitiesPic if new files are uploaded
-//      if (req.files.amenitiesPic && req.files.amenitiesPic.length > 0) {
-//        const amenitiesPic = await multipleImagesUpload(req.files.amenitiesPic);
-//        body.amenitiesPic = amenitiesPic.map((pic) => pic.url);
-//      }
- 
-//      // Update building data with new values
-//      const building = await Building.findByIdAndUpdate(req.params.id, body, { new: true });
-//      res.status(200).json(building);
-//    } catch (err) {
-//      console.log(err);
-//      res.status(500).json({ error: 'Internal Server Error' });
-//    }
-//  };
- 
-
 
 buildingsCltr.listPendingApproval = async(req,res)=>{
    try{
@@ -436,61 +294,9 @@ buildingsCltr.disapprove = async(req,res)=>{
    }
 }
 
-// buildingsCltr.search = async (req,res) => {
-//    try {
-//       console.log(req.query)
-//       const search = req.query.address || ""
-//       const gender = req.query.gender || ""
-//       const sharing = req.query.sharing || ""
-//       // // let amenities = req.query.amenities || "All"
-//       // // let a = amenities.split(',').map(ele => new ObjectId(ele))
-//       // // console.log(a)
-//       // const amenitiesOption = await Amenity.find()
-//       // amenities = amenities === "All" ? amenitiesOption.map(option => option._id) : amenities.split(',');
-//       //console.log(amenitiesOption.map(ele =>(ele._id)).forEach(ele =>  ele))
-//       //buildings based on address & gender
-//       const buildings1 = await Building.find({address: { $regex: search, $options: "i" },...(gender && { gender:  gender}),isApproved:'Accepted'}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
-//       const buildings1Id = buildings1.map(ele => ele._id)
-//       //address: { $regex: search, $options: "i" },gender,
-//       //amenities: { $in: a 
-//       // .where("amenities")
-//       // .in([...amenities])
-
-//       const rooms = await Room.find({buildingId: {$in: buildings1Id},sharing})
-//       const buildingIds = rooms.map(ele => ele.buildingId)
-//       //buildings based on sharing
-//       const buildings2 = await Building.find({_id: {$in: buildingIds},isApproved:'Accepted'}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
-
-//       //combine both & remove duplicate copies of the same building
-//       const combinedBuildings = buildings1.concat(buildings2)
-//       const uniqueBuildingsId = []
-//       const filterdBuildings = combinedBuildings.filter(ele => {
-//          if(!uniqueBuildingsId.includes(ele._id.toString())) {
-//             uniqueBuildingsId.push(ele._id.toString())
-//             return true
-//          } else {
-//             return false
-//          }
-//       })
-//       //console.log(filterdBuildings.map(ele => ele._id))
-
-//       // const response = {
-//       //    error: false,
-//       //    //amenitiess: amenitiesOption.map(ele =>new ObjectId(ele._id)),
-//       //    buildingIds,
-//       //    filterdBuildings
-//       // }
-//       res.json(filterdBuildings)
-
-//    } catch(err) {
-//       console.log(err)
-//       res.status(500).json({error:'Internal Server Error'})
-//    }
-// }
 
 buildingsCltr.search = async (req,res) => {
    try {
-      console.log(req.query)
       const search = req.query.address || ""
       const gender = req.query.gender || ""
       const amenities = req.query.amenities ? req.query.amenities.split(',') : [];
@@ -511,25 +317,14 @@ buildingsCltr.search = async (req,res) => {
          .find(searchQuery)
          
          
-         
       if(sharing) {
          const buildingsMatchingSharing = buildings.filter(building => {
             return building.rooms.some(ele => ele.roomid.sharing == sharing)
          }).map(ele => ele._id)
    
          buildings = await Building.find({'_id': {$in: buildingsMatchingSharing}}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
-            //.sort({'_id': {$in: buildingsMatchingSharing} ? -1 : 1})
-            //.sort({ 'rooms.roomid.amount': order })
-            // .skip((page - 1) * limit)
-            // .limit(limit)
       } else {
-         // buildings = await Building.find(searchQuery).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
-         //    //.sort({'_id': {$in: buildingsMatchingSharing} ? -1 : 1})
-         //    .sort({ 'rooms.roomid.amount': order })
-         //    .skip((page - 1) * limit)
-         //    .limit(limit)
          buildings = await Building.find(searchQuery).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
-         
       }
 
       buildings.sort((a, b) => {
@@ -546,30 +341,7 @@ buildingsCltr.search = async (req,res) => {
        const total = buildings.length
        // Pagination
        buildings = buildings.slice((page - 1) * limit, page * limit);
-       
-      // const buildingsMatchingSharing = [] , buildingsNotMatchingSharing = []
 
-      // buildings1.forEach(building => {
-      //    if(building.rooms.some(ele => ele.roomid.sharing === sharing)) {
-      //       buildingsMatchingSharing.push(building)
-      //    } else {
-      //       buildingsNotMatchingSharing.push(building)
-      //    }
-      // })
-
-      // const sorter = (building , order) => {
-      //    return building.sort((a, b) => {
-      //       const minAmountA = Math.min(...a.rooms.map(room => room.roomid.amount));
-      //       const minAmountB = Math.min(...b.rooms.map(room => room.roomid.amount));
-      //       console.log('orde',order)
-      //       return order * (minAmountA - minAmountB);
-      //    })
-      // }
-      // const sortedBuildingWithSharing = sorter(buildingsMatchingSharing,order)
-      // const sortedBuildingWithNoSharing = sorter(buildingsNotMatchingSharing,order)
-
-      // const combinedBuildings = [...sortedBuildingWithSharing, ...sortedBuildingWithNoSharing]
-      // 
       res.json(
          {
          buildings,
@@ -580,9 +352,7 @@ buildingsCltr.search = async (req,res) => {
          }
       
       }
-      )
-      //res.json(buildings)
-      
+      )      
    } catch(err) {
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})

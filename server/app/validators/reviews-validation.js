@@ -1,11 +1,4 @@
 const reviewsValidationSchema = {
-    // name:{
-    //     notEmpty:{
-    //         errorMessage:'Name is required'
-    //     },
-    //     trim:true,
-    //     escape:true
-    // },
     stars:{
         notEmpty:{
             errorMessage:'Stars is required'

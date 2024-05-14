@@ -13,7 +13,6 @@ reviewsCltr.create = async(req,res)=>{
     try{
         const userId = req.user.id
         const buildingId = req.params.buildingid
-        console.log(userId, buildingId)
         const guest = await Guest.findOne({userId:userId, buildingId:buildingId})
         if(!guest){
             return res.status(404).json({error:"User must first be a tenat in this PG in order to give a review"})

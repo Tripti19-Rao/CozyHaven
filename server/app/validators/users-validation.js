@@ -59,9 +59,6 @@ const userLoginValidationSchema={
         notEmpty:{
             errorMessage:'Email is required'
         },
-        // isEmail:{
-        //     errorMessage:'Invalid email'
-        // },
         trim: true,
         escape:true
     },
@@ -69,10 +66,6 @@ const userLoginValidationSchema={
         notEmpty:{
             errorMessage:'Password is required'
         },
-        // isLength:{
-        //     options:{min:8,max:128},
-        //     errorMessage:'Password should be between 8 to 128 characters long'
-        // },
         trim:true,
         escape:true
     }

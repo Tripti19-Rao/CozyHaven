@@ -43,10 +43,6 @@ paymentsCltr.pay = async(req,res)=>{
             cancel_url: 'http://localhost:3000/cancel',
             customer : customer.id
         })
-        
-        // console.log(session.url)
-        // console.log(session.id)
-
         const payment = new Payment(body)
         payment.invoiceId = body.invoiceId
         payment.transactionId = session.id
@@ -60,7 +56,6 @@ paymentsCltr.pay = async(req,res)=>{
         if(finder) {
             finder.paymentHistory = [...finder.paymentHistory, payment._id]
             await finder.save()
-            //console.log('finder', finder)
         }
 
         //get the building id from invoice id
@@ -78,15 +73,10 @@ paymentsCltr.pay = async(req,res)=>{
             guest.email = req.user.email
             guest.invoiceHistory = [...guest.invoiceHistory, payment.invoiceId]
             guest.paymentHistory = [...guest.paymentHistory, payment._id]
-            //guest.dateOfJoin = invoice.createdAt
             await guest.save()
-            const room = await Room.findOneAndUpdate({_id: invoice.roomId},{$push:{ guest: guest._id}},{new:true})
-            // console.log(room)
+            await Room.findOneAndUpdate({_id: invoice.roomId},{$push:{ guest: guest._id}},{new:true})
         } else {
-            //if the guset is already present then update the paymentHistory
-            //guest.invoiceHistory = [...guest.invoiceHistory, payment.invoiceId]
             guest.paymentHistory = [...guest.paymentHistory, payment._id]
-            //console.log(guest)
             await guest.save()
         }
        
@@ -143,7 +133,6 @@ paymentsCltr.updateUsingPaymentId = async(req,res) =>{
         console.log('id',id)
         const body = pick(req.body,['status'])
         const payment = await Payment.findOneAndUpdate({_id: id},body,{new:true})
-        console.log(payment)
         res.json(payment)
     }catch(err){
         console.log(err)

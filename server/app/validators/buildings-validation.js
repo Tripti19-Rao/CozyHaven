@@ -100,17 +100,15 @@ const buildingsValidationSchema = {
 }
 
 const buildingsEditValidationSchema = {
-    // profilePic:{
-    //     custom:{
-    //         options:function(value,{req}){
-    //             if(!req.files.profilePic){
-    //                 throw new Error('Profile picture is required')
-    //             }
-    //             return true
-    //         }
-    //     },
-    //     escape:true
-    // },
+    profilePic:{
+        notEmpty: {
+            errorMessage: 'Profile Picture is required'
+        },
+        isURL: {
+            errorMessage: 'Profile Picture must be a valid URL'
+        },
+        escape:true
+    },
     name:{
         notEmpty:{
             errorMessage:'Name is required'
@@ -156,28 +154,24 @@ const buildingsEditValidationSchema = {
         trim:true,
         escape:true
     },
-    // amenitiesPic:{
-    //     custom:{
-    //         options:function(value,{req}){
-    //             if(!req.files.amenitiesPic){
-    //                 throw new Error('Amenities pic is required')
-    //             }
-    //             return true
-    //         }
-    //     },
-    //     escape:true
-    // },
-    // license:{
-    //     custom:{
-    //         options:function(value,{req}){
-    //             if(!req.files.license){
-    //                 throw new Error('License picture are required for apporval')
-    //             }
-    //             return true
-    //         }
-    //     },
-    //     escape: true
-    // },
+    amenitiesPic: {
+        notEmpty: {
+            errorMessage: 'Amenities Picture is required'
+        },
+        isURL: {
+            errorMessage: 'Amenities Picture must be a valid URL'
+        },
+        escape: true
+    },    
+    license:{
+        notEmpty: {
+            errorMessage: 'license Picture is required'
+        },
+        isURL: {
+            errorMessage: 'license Picture must be a valid URL'
+        },
+        escape: true
+    },
     'geolocation.lat':{
         notEmpty:{
             errorMessage:'Geolocation latitude is required'
@@ -199,6 +193,7 @@ const buildingsEditValidationSchema = {
         escape:true
     }
 }
+
 
 const buildingsAprrovalValidationSchema = {
     isApproved:{

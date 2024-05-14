@@ -42,7 +42,6 @@ findersCltr.listOne = async (req,res) => {
             return res.status(404).json({message: 'Record Not Found'})
         }
         return res.status(201).json(finder)
-        //console.log(finder)
     } catch(err) {
         console.log(err)
         res.status(500).json({error: 'Internal Server Error'})
@@ -84,8 +83,6 @@ findersCltr.listWishlist = async (req,res) => {
             return res.status(404).json({message: 'Record Not Found'})
         }
         return res.status(201).json(finder)
-        //console.log(finder)
-
     } catch(err) {
         console.log(err)
         res.status(500).json({error: 'Internal Server Error'})
@@ -93,7 +90,6 @@ findersCltr.listWishlist = async (req,res) => {
 }
 
 findersCltr.update = async (req,res) => {
-    //const id = req.params.id
     const userid = req.user.id
     const {body} = req
    

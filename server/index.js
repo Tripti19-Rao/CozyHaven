@@ -62,7 +62,7 @@ app.get('/api/users/account',authenticateUser,authoriseUser(['admin','owner','fi
 
 //Admin getting all chart data
 app.get('/api/chart/users',authenticateUser,authoriseUser(['admin']),usersCltr.getData )
-
+ 
 //List all the building for charts
 app.get('/api/chart/buildings',authenticateUser,authoriseUser(['admin']),buildingsCltr.getData)
 
@@ -99,50 +99,33 @@ app.get('/api/buildings/one/:id',authenticateUser,authoriseUser(['finder']),buil
 //Delete Building
 app.delete('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.destroy)
 
-//Update Building
-// app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),
-// upload.fields([
-//     {name: 'profilePic' ,maxCount: 1},
-//     {name: 'amenitiesPic'},
-//     {name: 'license'}
-// ]),
-// checkSchema(buildingsEditValidationSchema),buildingsCltr.update)
 
-
-
-//edit building without multer
+//Edit a building
 app.put('/api/buildings/:id',authenticateUser,authoriseUser(['owner']),buildingsCltr.update)
 
-//editing amenties images uplaod
+//Editing amenties images uplaod
 app.post('/api/images/amenities',authenticateUser,authoriseUser(['owner']),
 upload.fields([
     {name: 'amenitiesPic'}
 ]),buildingsCltr.updateAmenities)
 
-//editing profile image uplaod
+//Editing profile image uplaod
 app.post('/api/images/profile',authenticateUser,authoriseUser(['owner']),
 upload.fields([
     {name: 'profilePic', maxCount: 1}
 ]),buildingsCltr.updateProfilePic)
 
-//editing license images uplaod
+//Editing license images uplaod
 app.post('/api/images/license',authenticateUser,authoriseUser(['owner']),
 upload.fields([
     {name: 'license'}
 ]),buildingsCltr.updateLicense)
 
-//editing roomspic upload
+//Editing roomspic upload
 app.post('/api/images/roompic',authenticateUser,authoriseUser(['owner']),
 upload.fields([
     {name: 'pic'}
 ]),roomsCltr.updateRoompics)
-
-
-//editing image upload
-// app.put('/api/images',authenticateUser,authoriseUser(['owner']),
-// upload.fields([
-//     {name: 'amenitiesPic'},
-// ]),buildingsCltr.updateimages)
 
 
 //Searching Buildings
@@ -225,6 +208,10 @@ app.put('/api/stay/:buildingid/guests/:id',authenticateUser,authoriseUser(['owne
 //Check if guest
 app.get('/api/:buildingid/member/:finderid',authenticateUser,authoriseUser(['finder']),guestsCltr.check)
 
+//Get status statistics
+app.get('/api/chart/status/:buildingid',guestsCltr.status)
+
+
 //REVIEWS
 //Create Review
 app.post('/api/:buildingid/reviews',authenticateUser,authoriseUser(['finder']),getUserName,checkSchema(reviewsValidationSchema),reviewsCltr.create)
@@ -241,7 +228,7 @@ app.delete('/api/:buildingid/reviews/:reviewid',authenticateUser,authoriseUser([
 
 //PAYMENT
 //Create Payment
-app.post('/api/create-checkout-session',authenticateUser,authoriseUser(['finder']),paymentsCltr.pay)
+app.post('/api/create-checkout-session',authenticateUser,authoriseUser(['finder']),checkSchema(paymentsValidationSchema),paymentsCltr.pay)
 
 //Listing Payments - for whom?
 app.get('/api/:buildingid/payments',authenticateUser,authoriseUser(['owner']),paymentsCltr.list)
@@ -255,7 +242,7 @@ app.put('/api/payments/update/:stripId',authenticateUser,authoriseUser(['finder'
 //Updating payment using payment id
 app.put('/api/payments/:paymentid',authenticateUser,authoriseUser(['finder']),paymentsCltr.updateUsingPaymentId)
 
-//INVOICE
+//INVOICE 
 //Create Invoice
 app.post('/api/invoice',authenticateUser,authoriseUser(['finder']),checkSchema(invoicesValdiationSchema),InvoicesCltr.create)
 

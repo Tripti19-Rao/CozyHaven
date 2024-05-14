@@ -1,44 +1,21 @@
-const { estimatedDocumentCount } = require("../models/rooms-model")
-
 const paymentsValidationSchema = {
-    transactionId:{
+    invoiceId:{
         notEmpty:{
-            errorMessage:'Payment Transaction ID cannot be empty'
+            errorMessage: 'invoice id is required'
         },
-        trim:true,
-        escape:true
-    },
-    paymentType:{
-        notEmpty:{
-            errorMessage:'Payment Transaction ID cannot be empty'
-        },
-        trim:true,
-        escape:true
+        isMongoId:{
+            errorMessage: 'Should be a vaild mongoId'
+        }
     },
     amount:{
-        notEmpty:{
-            errorMessage:'Payment Transaction ID cannot be empty'
+        notEmpty: {
+            errorMessage: 'Amount is required'
         },
-        trim:true,
-        escape:true
-    },
-    type:{
-        notEmpty:{
-            errorMessage:'Payment Transaction ID cannot be empty'
+        isNumeric: {
+            errorMessage: 'Amount must be a Number'
         },
-        trim:true,
-        escape:true
-    },
-    status:{
-        notEmpty:{
-            errorMessage:'Status is required'
-        },
-        isIn : {
-            options: [['Pending','Success','Failed']],
-            errorMessage: 'Status should be within the given list'
-        },
-        trim:true,
-        escape:true
+        trim: true,
+        escape: true
     }
 }
 

@@ -36,17 +36,7 @@ InvoicesCltr.create = async(req,res)=>{
         }
 
         res.json(invoice1)
-        
-        // const body = pick(req.body,['amount'])
-        // const invoice = new Invoice()
-        // invoice.buildingId = req.params.buildingid
-        // invoice.roomId=req.params.roomid
-        // invoice.userId=req.user.id
-        // invoice.amount = body.amount
-        // await invoice.save()
-        // const invoiceId = invoice._id
-        // const amount = invoice.amount
-        // res.json({invoiceId,amount})
+
     }catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})
@@ -79,7 +69,6 @@ InvoicesCltr.destroy = async(req,res)=>{
     const guest = await Guest.findOne({finderId: invoice.userId,buildingId: invoice.buildingId})
     if(guest) {
         const filteredInvoice = guest.invoiceHistory.filter(ele => !(ele).equals(invoice._id))
-        //console.log(filteredInvoice)
         guest.invoiceHistory = filteredInvoice
         await guest.save()
     }

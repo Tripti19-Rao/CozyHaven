@@ -1,6 +1,8 @@
 const {validationResult} = require('express-validator')
 const Guest = require('../models/guests-model')
 const Room = require('../models/rooms-model')
+const Invoice = require('../models/invoices-model')
+const Payment = require('../models/payments-model')
 const { pick } = require('lodash')
 const cloudinary = require('../middlewares/cloudinary')
 
@@ -57,7 +59,6 @@ guestsCltr.list = async (req,res) => {
         const stayParam = req.query.stay || true
         const stay = stayParam === 'false' ? false : Boolean(stayParam);
         const searchQuery = {stay:stay}
-        //const searchQuery = {name : {$regex: search, $options: 'i'}, stay:stay}
         const sortQuery ={}
         sortQuery[sortBy] = order === 'asc'? 1 : -1
         sortQuery['roomId.amount'] = order === 'asc' ? 1 : -1;
@@ -65,16 +66,6 @@ guestsCltr.list = async (req,res) => {
         limit = parseInt(limit)
         const guests = await Guest.find({ buildingId: buildingId }).populate('roomId').populate('invoiceHistory').populate('paymentHistory')
         .find(searchQuery)
-        //.sort(sortQuery)
-        
-
-        // const customSort = (a, b) => {
-        //     const amountA = a.roomId ? a.roomId.amount : 0;
-        //     const amountB = b.roomId ? b.roomId.amount : 0;
-        //     return amtorder === 'asc' ? amountA - amountB : amountB - amountA;
-        // };
-
-        //guests.sort(customSort).skip((page-1)*limit).limit(limit).exec();
 
         if(!guests) {
             return res.status(404).json({message: 'Record Not Found'})
@@ -98,7 +89,6 @@ guestsCltr.list = async (req,res) => {
 
         const total = guests.length;
         
-        //const total = await Guest.countDocuments(searchQuery)
         res.json({
             data:paginatedGuests,
             page,
@@ -107,7 +97,6 @@ guestsCltr.list = async (req,res) => {
             stay,
             totalPages:Math.ceil(total / limit)
         })
-        // res.json(guests)
     } catch(err) {
         console.log(err) 
         res.status(500).json({error: 'Internal Server Error'})
@@ -117,7 +106,6 @@ guestsCltr.list = async (req,res) => {
 //list the pending guest registration of a finder
 guestsCltr.listPendingReg = async (req,res) => {
     try {
-        //const finderid = req.params.id
         const userid = req.user.id
         const guests = await Guest.find({userId: userid, isComplete: false}).populate('buildingId', 'name');
         if(!guests) {
@@ -135,7 +123,6 @@ guestsCltr.update = async (req,res) => {
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()})
     }
-    //const id = req.params.id
     const buildingId = req.params.buildingid
     const body = pick(req.body,['name','profile','gender','age','dob','phoneNo','address','aadharNo','qualification','guardian','guardianNo','isComplete'])
 
@@ -149,7 +136,6 @@ guestsCltr.update = async (req,res) => {
 
     const aadharPic = await singleImageUpload(req.files.aadharPic[0], 'Aadhar'); // Use [0] to get the first file from the array
     body.aadharPic = aadharPic
-    //body.aadharPic = req.files['aadharPic'] ? req.files['aadharPic'].map(file => file.path) : []
     try {
         const guest = await Guest.findOneAndUpdate({userId:req.user.id,buildingId: buildingId},body,{new:true})
         if(!guest) {
@@ -190,8 +176,6 @@ guestsCltr.check = async(req,res)=>{
     try{
         const buildingId = req.params.buildingid
     const finderId = req.params.finderid
-    console.log("finderid", finderId)
-    console.log("buildingId", buildingId)
     const check = await Guest.findOne({buildingId:buildingId,finderId:finderId})
     res.json(check)
     }catch(err){
@@ -201,5 +185,33 @@ guestsCltr.check = async(req,res)=>{
     }
     
 }
+
+guestsCltr.status = async(req,res)=>{
+    try{
+        const buildingId = req.params.buildingid
+        const invoicesList = await Invoice.find({buildingId:buildingId}).select('_id')
+        const status = await Payment.find({invoiceId: invoicesList.map((ele)=>ele._id)}).select('_id status amount updatedAt')
+        const data = status.filter((ele)=>ele.status==="Successful")
+        const revData = data.map((ele)=>{
+            const month = new Date(ele.updatedAt).getMonth()
+            return {month, amount: ele.amount}
+        }).reduce((totalRevMonth, item)=>{
+            totalRevMonth[item.month] = (totalRevMonth[item.month] || 0 ) + item.amount
+            return totalRevMonth
+        },{})
+        const revenue = Object.entries(revData).map(([month, amount]) => ({ month: parseInt(month), amount }));
+
+        res.json({
+
+            "revenue": revenue,
+            "status":status
+        })
+    }catch(err){
+        console.log(err)
+        res.status(500).json({error:'Internal Server Error'})
+    }
+}
+
+
 
 module.exports = guestsCltr

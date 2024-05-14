@@ -51,16 +51,6 @@ const guestsValidationSchema = {
         trim: true,
         escape: true
     },
-    // email: {
-    //     notEmpty: {
-    //         errorMessage: 'Email is required'
-    //     },
-    //     isEmail: {
-    //         errorMessage: 'Email must be of a valid format'
-    //     },
-    //     trim: true,
-    //     escape: true
-    // },
     address: {
         notEmpty: {
             errorMessage: 'Address is required'

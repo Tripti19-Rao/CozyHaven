@@ -16,8 +16,6 @@ const getUserName = async (req,res,next)=>{
         if(!user){
             return res.status(400).json({error:'User doesnt exist'})
         }
-        // const {body} = req
-        // body.name=user.username
         next()
     } catch(err) {
         console.log(err)
