@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
 const axios = require('axios')
 const {validationResult} = require('express-validator')
-const {pick} = require('lodash')
+const { pick } = require('lodash')
 const usersCltr = {}
 
 usersCltr.register = async(req,res)=>{
@@ -31,11 +31,10 @@ usersCltr.register = async(req,res)=>{
             } 
         }
         res.status(201).json(user)
-    }catch(err){
+    } catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})
     }
-
 }
 
 usersCltr.login = async(req,res)=>{
@@ -74,13 +73,11 @@ usersCltr.login = async(req,res)=>{
         } else {
             res.json({'token': token})
         }
-        
-    }catch(err){
+    } catch(err){
         console.log(err)
         res.status(500).json({errors:'Internal Server Error'})
     }
 }
-
 
 usersCltr.account = async (req,res) => {
     try {
@@ -101,7 +98,7 @@ usersCltr.getData = async(req,res)=>{
     try{
         const users = await User.find().select('_id role')
         res.json(users)
-    }catch(err){
+    } catch(err){
         console.log(err)
         res.status(500).json({errors:'Internal Server Error'})
     }

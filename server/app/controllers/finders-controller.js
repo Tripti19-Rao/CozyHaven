@@ -1,6 +1,4 @@
-const { pick } = require('lodash')
 const Finder = require('../models/finder-model')
-const { populate } = require('../models/guests-model')
 const Guest = require('../models/guests-model')
 const findersCltr = {}
 
@@ -55,8 +53,8 @@ findersCltr.listWishlist = async (req,res) => {
         const finder = await Finder.findOne({userId: userid}).populate({
             path: 'wishList',
             populate: [
-                { path: 'amenities' }, // Populate amenities within wishList
-                { path: 'rooms.roomid' } // Populate roomId within rooms within wishList
+                { path: 'amenities' }, 
+                { path: 'rooms.roomid' } 
             ]
         }).populate({
             path: 'paymentHistory',
@@ -78,7 +76,6 @@ findersCltr.listWishlist = async (req,res) => {
             ]
         })
 
-        
         if(!finder) {
             return res.status(404).json({message: 'Record Not Found'})
         }
@@ -92,7 +89,6 @@ findersCltr.listWishlist = async (req,res) => {
 findersCltr.update = async (req,res) => {
     const userid = req.user.id
     const {body} = req
-   
     try {
         const finder = await Finder.findOneAndUpdate({userId: userid},body,{new: true})
         if(!finder) {
@@ -122,7 +118,6 @@ findersCltr.mine = async (req,res) => {
                     select: '_id amount sharing guest'
                 }
             ]
-
         }).sort({ _id: -1 })
         res.status(201).json(myBuildings)
     } catch(err) {
@@ -130,6 +125,5 @@ findersCltr.mine = async (req,res) => {
         res.status(500).json({error: 'Internal Server Error'})
     }
 }
-
 
 module.exports = findersCltr

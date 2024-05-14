@@ -1,5 +1,5 @@
 const Amenity = require('../models/amenities-model')
-const {validationResult} = require('express-validator')
+const { validationResult } = require('express-validator')
 const amenitiesCltr = {}
 
 amenitiesCltr.create = async (req,res) => {

@@ -62,7 +62,6 @@ const getOwnerEmail = async (req,res,next)=>{
     }
 }
 
-
 module.exports = {
     getUserName,
     getOwnerId,

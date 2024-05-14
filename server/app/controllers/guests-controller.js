@@ -1,11 +1,10 @@
-const {validationResult} = require('express-validator')
+const { validationResult } = require('express-validator')
 const Guest = require('../models/guests-model')
 const Room = require('../models/rooms-model')
 const Invoice = require('../models/invoices-model')
 const Payment = require('../models/payments-model')
 const { pick } = require('lodash')
 const cloudinary = require('../middlewares/cloudinary')
-
 const guestsCltr = {}
 
 guestsCltr.create = async (req,res) => {
@@ -131,10 +130,10 @@ guestsCltr.update = async (req,res) => {
         return result.secure_url
     };
 
-    const profile = await singleImageUpload(req.files.profile[0], 'GuestProfile'); // Use [0] to get the first file from the array
+    const profile = await singleImageUpload(req.files.profile[0], 'GuestProfile'); 
     body.profile = profile
 
-    const aadharPic = await singleImageUpload(req.files.aadharPic[0], 'Aadhar'); // Use [0] to get the first file from the array
+    const aadharPic = await singleImageUpload(req.files.aadharPic[0], 'Aadhar'); 
     body.aadharPic = aadharPic
     try {
         const guest = await Guest.findOneAndUpdate({userId:req.user.id,buildingId: buildingId},body,{new:true})
@@ -147,7 +146,6 @@ guestsCltr.update = async (req,res) => {
         res.status(500).json({error: 'Internal Server Error'})
     }
 }
-
 
 guestsCltr.destroy = async (req,res) => {
     const id = req.params.id
@@ -178,12 +176,10 @@ guestsCltr.check = async(req,res)=>{
     const finderId = req.params.finderid
     const check = await Guest.findOne({buildingId:buildingId,finderId:finderId})
     res.json(check)
-    }catch(err){
+    } catch(err){
         console.log(err)
         res.status(500).json({error: 'Internal Server Error'})
-
-    }
-    
+    } 
 }
 
 guestsCltr.status = async(req,res)=>{
@@ -200,18 +196,14 @@ guestsCltr.status = async(req,res)=>{
             return totalRevMonth
         },{})
         const revenue = Object.entries(revData).map(([month, amount]) => ({ month: parseInt(month), amount }));
-
         res.json({
-
             "revenue": revenue,
             "status":status
         })
-    }catch(err){
+    } catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})
     }
 }
-
-
 
 module.exports = guestsCltr

@@ -1,11 +1,9 @@
 const { validationResult } = require('express-validator')
-const {pick} = require('lodash')
+const { pick } = require('lodash')
 const Building = require('../models/buildings-model')
 const nodemailer = require('nodemailer');
 const buildingsCltr= {}
-const Room = require('../models/rooms-model');
 const cloudinary = require('../middlewares/cloudinary')
-
 
 buildingsCltr.create = async (req, res) => {
    const errors = validationResult(req);
@@ -14,12 +12,10 @@ buildingsCltr.create = async (req, res) => {
    }
    try {
        const body = pick(req.body, ['name', 'address', 'contact', 'deposit', 'rules', 'geolocation.lat', 'geolocation.lng', 'amenities', 'gender']);
-
        // Check if files were uploaded
        if (!req.files || Object.keys(req.files).length === 0) {
            return res.status(400).json({ message: 'No files were uploaded.' });
        }
-
        // Function to upload a single image to Cloudinary with specified folder name
        const singleImageUpload = async (file, folderName) => {
            const result = await cloudinary.uploader.upload(file.path, { folder: folderName });
@@ -67,7 +63,6 @@ buildingsCltr.create = async (req, res) => {
    }
 };
 
-
 buildingsCltr.list = async(req,res)=>{
    const id = req.user.id
    try{
@@ -76,7 +71,7 @@ buildingsCltr.list = async(req,res)=>{
         return res.status(200).json('You dont own any building yet')
       }
       res.json(buildings)
-   }catch(err){
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }   
@@ -90,7 +85,7 @@ buildingsCltr.listOne = async(req,res)=>{
          return res.status(200).json('You dont have any buildings to show yet')
       }
       res.json(buildings)
-   }catch(err){
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }
@@ -118,12 +113,11 @@ buildingsCltr.destroy = async(req,res)=>{
          return res.status(404).json({error:'Building not found'})
       }
       res.json(building)
-   }catch(err){
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }
 }
-
 
 buildingsCltr.updateAmenities = async(req, res)=>{
    try{
@@ -139,12 +133,10 @@ buildingsCltr.updateAmenities = async(req, res)=>{
          return uploadedImages;
      };
       const amenitiesPic = await multipleImagesUpload(req.files.amenitiesPic);
-   
       const amenitiesPictures = amenitiesPic.map(pic => pic.url);
       res.status(200).json(amenitiesPictures)
-   }
-   catch(err){
-            res.status(500).json({error:'Internal Server Error'})
+   } catch(err){
+      res.status(500).json({error:'Internal Server Error'})
    }
 }
 
@@ -157,16 +149,13 @@ buildingsCltr.updateProfilePic = async(req, res)=>{
              cloudinary_id: result.public_id
          };
      };
-     const profilePic = await singleImageUpload(req.files.profilePic[0]); 
-   
+      const profilePic = await singleImageUpload(req.files.profilePic[0]); 
       const profilePicture = profilePic.url
       res.status(200).json(profilePicture)
-   }
-   catch(err){
-            res.status(500).json({error:'Internal Server Error'})
+   } catch(err){
+      res.status(500).json({error:'Internal Server Error'})
    }
 }
-
 
 buildingsCltr.updateLicense = async(req, res)=>{
    try{
@@ -178,39 +167,33 @@ buildingsCltr.updateLicense = async(req, res)=>{
          };
      };
      const license = await singleImageUpload(req.files.license[0]); 
-   
       const licensePicture = license.url
       res.status(200).json(licensePicture)
-   }
-   catch(err){
-            res.status(500).json({error:'Internal Server Error'})
+   } catch(err){
+      res.status(500).json({error:'Internal Server Error'})
    }
 }
-
 
 buildingsCltr.update = async (req, res) => {
    const errors = validationResult(req);
    if (!errors.isEmpty()) {
      return res.status(400).json({ errors: errors.array() });
    }
- 
    try {
      const body = pick(req.body, ['name', 'address', 'contact', 'deposit', 'rules', 'geolocation.lat', 'geolocation.lng', 'amenities', 'gender','amenitiesPic', 'license', 'profilePic']);
      const building = await Building.findByIdAndUpdate(req.params.id, body, { new: true });
      res.status(200).json(building);
-}
-    catch (err) {
+   } catch (err) {
      console.log(err);
      res.status(500).json({ error: 'Internal Server Error' });
    }
  };
  
-
 buildingsCltr.listPendingApproval = async(req,res)=>{
    try{
       const buildings = await Building.find({isApproved:'Pending'})
       res.json(buildings)
-   }catch(err){
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }   
@@ -220,7 +203,7 @@ buildingsCltr.approved = async(req,res)=>{
    try{
       const buildings = await Building.find({isApproved:'Accepted'})
       res.json(buildings)
-   }catch(err){
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }   
@@ -256,7 +239,7 @@ buildingsCltr.approve = async(req,res)=>{
          }
       });  
       res.json(building)
-   }catch(err){
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }
@@ -288,12 +271,11 @@ buildingsCltr.disapprove = async(req,res)=>{
          }
       });
       res.json(building)
-   }catch(err){
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }
 }
-
 
 buildingsCltr.search = async (req,res) => {
    try {
@@ -313,20 +295,16 @@ buildingsCltr.search = async (req,res) => {
          isApproved:'Accepted',
       }
 
-      let buildings = await Building.find().populate('rooms.roomid',['sharing'])
-         .find(searchQuery)
-         
-         
+      let buildings = await Building.find().populate('rooms.roomid',['sharing']).find(searchQuery)
+
       if(sharing) {
          const buildingsMatchingSharing = buildings.filter(building => {
             return building.rooms.some(ele => ele.roomid.sharing == sharing)
          }).map(ele => ele._id)
-   
          buildings = await Building.find({'_id': {$in: buildingsMatchingSharing}}).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
       } else {
          buildings = await Building.find(searchQuery).populate('amenities',['_id','name','iconName']).populate('rooms.roomid',['_id','roomNo','sharing','amount','pic','guest'])
       }
-
       buildings.sort((a, b) => {
          const lowestAmountA = Math.min(...a.rooms.map(room => room.roomid.amount));
          const lowestAmountB = Math.min(...b.rooms.map(room => room.roomid.amount));
@@ -363,7 +341,7 @@ buildingsCltr.getData = async(req,res)=>{
    try{
       const buildings = await Building.find().populate('amenities',['_id','name','iconName'])
       res.json(buildings)
-   }catch(err){
+   } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
    }

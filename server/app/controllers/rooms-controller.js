@@ -1,9 +1,8 @@
 const Room = require('../models/rooms-model')
 const Building = require('../models/buildings-model')
-const {pick, isEmpty} = require('lodash')
-const {validationResult} = require('express-validator')
+const { pick } = require('lodash')
+const { validationResult } = require('express-validator')
 const cloudinary = require('../middlewares/cloudinary')
-const { pic } = require('../validators/rooms-validation')
 const roomsCltr = {}
 
 roomsCltr.create = async(req,res) => {
@@ -11,10 +10,8 @@ roomsCltr.create = async(req,res) => {
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()})
     }
-
     const buildingId = req.params.buildingid
     const body = pick(req.body,['roomNo','sharing','amount'])
-
     try{
         const multipleImagesUpload = async (files) => {
             const uploadedImages = []
@@ -24,21 +21,17 @@ roomsCltr.create = async(req,res) => {
             }
             return uploadedImages
         }
-
         const roompic = await multipleImagesUpload(req.files.pic)
-
         const room = new Room(body)
         room.ownerId = req.user.id
         room.buildingId = buildingId
         room.pic = roompic.map(ele => ele)
         await room.save()
-
         const building = await Building.findById({_id: room.buildingId})
         if(building) {
             building.rooms = [...building.rooms, {roomid: room._id}]
             await building.save()
         }
-
         res.json(room)
     } catch(err) {
         console.log(err)
@@ -72,7 +65,6 @@ roomsCltr.updateRoompics = async (req,res) => {
             }
             return uploadedImages
         }
-    
         const pic = await multipleImagesUpload(req.files.pic)
         res.status(200).json(pic)
     } catch(err) {
@@ -89,7 +81,6 @@ roomsCltr.update = async (req,res) => {
     const id = req.params.id
     const buildingId = req.params.buildingid
     const body = pick(req.body,['roomNo','sharing','amount','pic'])
-
     try {
         const room = await Room.findOneAndUpdate({_id: id,ownerId:req.user.id,buildingId: buildingId},body,{new:true})
         if(!room) {
@@ -110,8 +101,7 @@ roomsCltr.destroy = async (req,res) => {
         if(!room) {
             return res.status(404).json({message: 'Record Not Found'})
         }
-
-        //delete from building also
+        //delete from building 
         const building = await Building.findById({_id: room.buildingId})
         if(building) {
         const roomObjectId =  (room._id); // Convert room._id to ObjectId
@@ -119,7 +109,6 @@ roomsCltr.destroy = async (req,res) => {
             building.rooms = filteredRooms
             await building.save()
         }
-
         res.status(201).json(room)
     } catch(err) {
         console.log(err)

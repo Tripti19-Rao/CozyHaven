@@ -1,9 +1,8 @@
 const Invoice = require('../models/invoices-model')
-const {validationResult} = require('express-validator')
-const {pick} = require('lodash')
+const { validationResult } = require('express-validator')
+const { pick } = require('lodash')
 const Room = require('../models/rooms-model')
 const Building = require('../models/buildings-model')
-const Payment = require('../models/payments-model')
 const Guest = require('../models/guests-model')
 const InvoicesCltr = {}
 
@@ -15,11 +14,11 @@ InvoicesCltr.create = async(req,res)=>{
     try{
         const body = pick(req.body,['buildingId','roomId'])
         const room = await Room.findOne({_id:body.roomId, buildingId:body.buildingId})
-        if (!room) {
+        if(!room) {
             return res.status(404).json({ error: 'Room not found' });
         }
         const building = await Building.findOne({_id:body.buildingId,})
-        if (!building) {
+        if(!building) {
             return res.status(404).json({ error: 'Building not found' });
         }
         const price = room.amount + building.deposit
@@ -27,17 +26,14 @@ InvoicesCltr.create = async(req,res)=>{
         invoice1.amount = price
         invoice1.userId = req.user.id //finders id
         await invoice1.save()
-
         //pushing invoice into guest
         const guest = await Guest.findOne({finderId: invoice1.userId,buildingId: invoice1.buildingId})
         if(guest) {
             guest.invoiceHistory = [...guest.invoiceHistory, invoice1._id]
             await guest.save()
         }
-
         res.json(invoice1)
-
-    }catch(err){
+    } catch(err){
         console.log(err)
         res.status(500).json({error:'Internal Server Error'})
     }
@@ -51,7 +47,7 @@ InvoicesCltr.list = async(req,res)=>{
         return res.status(404).json({ error: 'Invoice not found' });
     }
     res.json(invoice)
-    }catch(err){
+    } catch(err){
       console.log(err)
       res.status(500).json({error:'Internal Server Error'})
     }
@@ -60,11 +56,10 @@ InvoicesCltr.list = async(req,res)=>{
 InvoicesCltr.destroy = async(req,res)=>{
     try{
         const id = req.params.id
-    const invoice = await Invoice.findOneAndDelete({_id:id})
+        const invoice = await Invoice.findOneAndDelete({_id:id})
     if(!invoice){
         return res.status(404).json({ error: 'Invoice not found' });
     }
-
     //removing invoice from guest 
     const guest = await Guest.findOne({finderId: invoice.userId,buildingId: invoice.buildingId})
     if(guest) {
@@ -72,14 +67,11 @@ InvoicesCltr.destroy = async(req,res)=>{
         guest.invoiceHistory = filteredInvoice
         await guest.save()
     }
-
     res.json(invoice)
-    }catch(err){
-      console.log(err)
-      res.status(500).json({error:'Internal Server Error'})
+    } catch(err){
+        console.log(err)
+        res.status(500).json({error:'Internal Server Error'})
     }
 }
-
-
 
 module.exports = InvoicesCltr
