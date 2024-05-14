@@ -104,9 +104,6 @@ const buildingsEditValidationSchema = {
         notEmpty: {
             errorMessage: 'Profile Picture is required'
         },
-        isURL: {
-            errorMessage: 'Profile Picture must be a valid URL'
-        },
         escape:true
     },
     name:{
@@ -158,17 +155,11 @@ const buildingsEditValidationSchema = {
         notEmpty: {
             errorMessage: 'Amenities Picture is required'
         },
-        isURL: {
-            errorMessage: 'Amenities Picture must be a valid URL'
-        },
         escape: true
     },    
     license:{
         notEmpty: {
             errorMessage: 'license Picture is required'
-        },
-        isURL: {
-            errorMessage: 'license Picture must be a valid URL'
         },
         escape: true
     },
@@ -194,23 +185,7 @@ const buildingsEditValidationSchema = {
     }
 }
 
-
-const buildingsAprrovalValidationSchema = {
-    isApproved:{
-        notEmpty:{
-            errorMessage:'Approval status cannot be empty'
-        },
-        isIn:{
-            options:[['Pending','Accepted','Rejected']],
-            errorMessage:'Approval status must be within the given list'
-        },
-        trim:true,
-        escape:true
-    }
-}
-
 module.exports = {
     buildingsValidationSchema,
-    buildingsEditValidationSchema,
-    buildingsAprrovalValidationSchema
+    buildingsEditValidationSchema
 } 

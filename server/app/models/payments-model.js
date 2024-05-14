@@ -16,7 +16,7 @@ const paymentsSchema = new Schema({
     status:{
         type:String,
         default:'Pending'
-    },
+    }
 },{timestamps:true})
 
 const Payment = model('Payment',paymentsSchema)
