@@ -361,7 +361,7 @@ buildingsCltr.search = async (req,res) => {
 
 buildingsCltr.getData = async(req,res)=>{
    try{
-      const buildings = await Building.find()
+      const buildings = await Building.find().populate('amenities',['_id','name','iconName'])
       res.json(buildings)
    }catch(err){
       console.log(err)
