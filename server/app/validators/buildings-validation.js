@@ -103,8 +103,7 @@ const buildingsEditValidationSchema = {
     profilePic:{
         notEmpty: {
             errorMessage: 'Profile Picture is required'
-        },
-        escape:true
+        }
     },
     name:{
         notEmpty:{
@@ -154,14 +153,12 @@ const buildingsEditValidationSchema = {
     amenitiesPic: {
         notEmpty: {
             errorMessage: 'Amenities Picture is required'
-        },
-        escape: true
+        }
     },    
     license:{
         notEmpty: {
             errorMessage: 'license Picture is required'
-        },
-        escape: true
+        }
     },
     'geolocation.lat':{
         notEmpty:{

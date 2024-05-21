@@ -83,8 +83,7 @@ const roomsEditValidationSchema = {
     pic: {
         notEmpty: {
             errorMessage: 'Picture is required'
-        },
-        escape: true
+        }
     },
     guests: {
         custom: {

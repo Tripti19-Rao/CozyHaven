@@ -52,7 +52,7 @@ paymentsCltr.pay = async(req,res)=>{
         //push the payment to paymentHistory of finders profile
         const finder = await Finder.findOne({userId: payment.userId})
         if(finder) {
-            finder.paymentHistory = [...finder.paymentHistory, payment._id]
+            finder.paymentHistory = [payment._id,...finder.paymentHistory]
             await finder.save()
         }
         //get the building id from invoice id
